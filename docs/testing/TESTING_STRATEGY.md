@@ -11,6 +11,9 @@
 | Area | File | Covers |
 | ---- | ---- | ------ |
 | Dashboard load + nav | `tests/App.test.tsx` | TC-002, TC-003 style routes |
+| Live call monitor + voice states | `tests/App.test.tsx` | KAN-19 SRD §33 fields, TC-002 voice chrome |
+| Call history demo table | `tests/App.test.tsx` | KAN-19 history page |
+| Voice UI mapping | `tests/voiceUi.test.ts` | Conversation state → idle/listening/speaking/error |
 | Health success / failure | `tests/App.test.tsx` | System Status healthy vs unavailable |
 | API base URL | `tests/App.test.tsx`, `tests/apiClient.test.ts` | Env-driven URL |
 | Network errors | `tests/apiClient.test.ts` | `ApiError` wrapping |

@@ -1,5 +1,6 @@
 import { MicrophoneCapturePanel } from "@/components/MicrophoneCapturePanel";
 import { Panel } from "@/components/Panel";
+import { VoiceStateLegend } from "@/components/VoiceStateLegend";
 
 export function CallsPage() {
   return (
@@ -7,14 +8,19 @@ export function CallsPage() {
       <div className="page__intro">
         <h2>Calls</h2>
         <p>
-          Browser microphone capture for the voice-agent POC. Start/stop controls request permission,
-          stream PCM chunks for a future STT handoff, and show basic input metering. No telephony or
-          phone-number setup is required.
+          Capture browser audio for the POC, and preview the voice interaction chrome operators see
+          during a live session (idle, listening, speaking, error).
         </p>
       </div>
-      <Panel title="Microphone Capture">
-        <MicrophoneCapturePanel />
-      </Panel>
+
+      <div className="calls-layout">
+        <Panel title="Microphone Capture">
+          <MicrophoneCapturePanel />
+        </Panel>
+        <Panel title="Voice interaction states">
+          <VoiceStateLegend />
+        </Panel>
+      </div>
     </div>
   );
 }

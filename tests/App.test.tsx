@@ -25,9 +25,36 @@ describe("dashboard foundation", () => {
     render(<App />);
 
     expect(await screen.findByTestId("dashboard-page")).toBeInTheDocument();
-    expect(screen.getByText("Active Calls")).toBeInTheDocument();
-    expect(screen.getByText("Recent Calls")).toBeInTheDocument();
+    expect(screen.getByTestId("live-call-monitor")).toBeInTheDocument();
+    expect(screen.getByText("Active call")).toBeInTheDocument();
     expect(screen.getByText("System Status")).toBeInTheDocument();
+  });
+
+  it("KAN-19 shows SRD live-call fields and voice states on dashboard", async () => {
+    render(<App />);
+
+    expect(await screen.findByTestId("live-call-monitor")).toBeInTheDocument();
+    expect(screen.getByTestId("live-call-state")).toHaveTextContent("WAITING FOR USER");
+    expect(screen.getAllByText("Hinglish").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("BOOK_APPOINTMENT").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("call-activity-timeline")).toBeInTheDocument();
+    expect(screen.getByText(/State → WAITING_FOR_USER/)).toBeInTheDocument();
+    expect(screen.getByTestId("voice-state-legend")).toBeInTheDocument();
+    expect(screen.getByText("Listening")).toBeInTheDocument();
+    expect(screen.getByText("Speaking")).toBeInTheDocument();
+    expect(screen.getByText("Error")).toBeInTheDocument();
+    expect(screen.getAllByText("Idle / waiting").length).toBeGreaterThan(0);
+  });
+
+  it("KAN-19 call history lists demo appointment sessions", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("link", { name: "Call History" }));
+    expect(await screen.findByTestId("history-page")).toBeInTheDocument();
+    expect(screen.getByTestId("recent-calls-table")).toBeInTheDocument();
+    expect(screen.getByText(/Booked — Dr. Mehta/)).toBeInTheDocument();
+    expect(screen.getByText(/Human handoff/)).toBeInTheDocument();
   });
 
   it("TC-003 navigates between primary routes", async () => {
