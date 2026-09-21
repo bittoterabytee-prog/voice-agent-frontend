@@ -2,7 +2,7 @@
 
 End-to-end flows as seen from the **frontend dashboard** repository.
 
-> Voice capture, STT/TTS, LLM, tools, and PostgreSQL run in the companion **backend** repo (`voice-agent`). This document describes what the UI does today and how it will attach to those flows later.
+> STT/TTS, LLM, tools, and PostgreSQL run in the companion **backend** repo (`voice-agent`). Browser microphone capture (KAN-10) runs in this frontend. This document describes what the UI does today and how it will attach to backend flows later.
 
 ## Primary flow (dashboard ↔ backend)
 
@@ -18,7 +18,7 @@ React app boots
 DashboardLayout + Sidebar navigation
       │
       ├── /          Overview panels
-      ├── /calls     Active calls placeholder
+      ├── /calls     Microphone capture (KAN-10) + future live calls
       ├── /history   Call history placeholder
       └── /settings  Shows resolved VITE_API_BASE_URL
       │
@@ -31,7 +31,22 @@ Dashboard System Status panel
       └── loading                 → Checking…
 ```
 
-## Intended future: live call monitoring (not implemented yet)
+## Browser microphone capture (KAN-10)
+
+```
+Operator opens /calls → Start
+      │
+      ▼
+getUserMedia + Web Audio ScriptProcessor
+      │
+      ├── permission denied / no device → visible error on panel
+      ├── capturing → PCM float32 chunks + level meter
+      └── Stop → tracks stopped, AudioContext closed
+```
+
+Chunk handoff format for future STT: [`docs/voice/AUDIO_CAPTURE.md`](docs/voice/AUDIO_CAPTURE.md).
+
+## Intended future: live call monitoring (partial)
 
 ```
 Backend call / conversation APIs (backend repo)
@@ -40,13 +55,13 @@ Backend call / conversation APIs (backend repo)
 Frontend services (to be added under src/services/)
       │
       ▼
-Calls / History pages replace placeholders
+Calls / History pages replace remaining placeholders
       │
       ▼
 Panels show active calls, transcripts, tool activity, errors
 ```
 
-Until those APIs are wired, **do not fabricate live call lists** in the UI.
+Until those APIs are wired, **do not fabricate live call lists** in the UI. Local mic capture does not invent backend call records.
 
 ## Appointment / booking (frontend role)
 

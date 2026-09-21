@@ -1,6 +1,14 @@
 # Voice Behavior (Frontend context)
 
-Spoken agent behavior is defined in the backend voice + conversation layers.
+Spoken agent behavior (prompts, turn-taking, interruptions) is defined in the backend voice + conversation layers.
+
+## Browser capture (KAN-10)
+
+This frontend owns **microphone permission + PCM capture + metering** only:
+
+- Start/Stop on `/calls`
+- Chunk handoff format documented in [`AUDIO_CAPTURE.md`](AUDIO_CAPTURE.md)
+- No STT/TTS/LLM in this repo
 
 Dashboard responsibilities when monitoring UIs are added:
 

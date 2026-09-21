@@ -5,7 +5,7 @@ Rules for humans and AI agents working on the **AI Voice Agent Frontend** reposi
 1. **Backend is the source of truth for appointment availability, call records, and conversation state.** The UI must display API data — never invent slots, bookings, or call outcomes.
 2. **AI must never invent appointment availability** in UI copy, mocks shipped as “live”, or client-side logic that pretends slots exist without a backend response.
 3. **AI must never claim an appointment was booked** in the UI unless a booking API confirms success.
-4. **Do not implement voice STT/TTS or conversation state machines in this repo** unless a ticket explicitly moves that ownership here. Prefer the backend `voice-agent` repository.
+4. **Do not implement voice STT/TTS or conversation state machines in this repo** unless a ticket explicitly moves that ownership here. Prefer the backend `voice-agent` repository. **Exception (KAN-10):** browser microphone permission, MediaStream capture, level metering, and PCM chunk handoff for a future STT client are frontend-owned — see [`docs/voice/AUDIO_CAPTURE.md`](docs/voice/AUDIO_CAPTURE.md).
 5. **Medical diagnosis is outside the scope of the product.** Dashboard copy and future agent surfaces must not provide diagnosis.
 6. **Never expose API keys or secrets.** Do not commit `.env`, PATs, or credentials. Vite may only expose public `VITE_*` values.
 7. **Do not put secrets in documentation or MCP prompts.** Use placeholders such as `YOUR_GITHUB_PAT`.

@@ -1,18 +1,18 @@
 # Frontend Structure
 
-Folder map and responsibilities for `voice-agent-frontend` ([KAN-6](https://voiceagentai.atlassian.net/browse/KAN-6), [KAN-9](https://voiceagentai.atlassian.net/browse/KAN-9)).
+Folder map and responsibilities for `voice-agent-frontend` ([KAN-6](https://voiceagentai.atlassian.net/browse/KAN-6), [KAN-9](https://voiceagentai.atlassian.net/browse/KAN-9), [KAN-10](https://voiceagentai.atlassian.net/browse/KAN-10)).
 
 ## Tree
 
 ```
 src/
 ├── app/                 Application root (providers + router host)
-├── components/          Reusable presentational UI
-├── hooks/               Shared hooks (system status polling)
+├── components/          Reusable presentational UI (incl. mic capture panel)
+├── hooks/               Shared hooks (system status, microphone capture)
 ├── layouts/             Dashboard chrome (sidebar + outlet)
 ├── pages/               Route-level screens
 ├── routes/              React Router route table
-├── services/            HTTP client + backend-facing services
+├── services/            HTTP client, health, audioCapture
 ├── store/               Lightweight UI state (sidebar open/close)
 ├── styles/              Global CSS
 ├── types/               Shared TypeScript types
@@ -21,7 +21,7 @@ src/
 └── vite-env.d.ts        Vite env typings
 tests/                   Vitest + Testing Library
 public/                  Static assets
-docs/                    Project knowledge (KAN-9)
+docs/                    Project knowledge (KAN-9+)
 ```
 
 ## Routes
@@ -29,7 +29,7 @@ docs/                    Project knowledge (KAN-9)
 | Path | Page | Role today |
 | ---- | ---- | ---------- |
 | `/` | `DashboardPage` | Overview panels + live System Status |
-| `/calls` | `CallsPage` | Active calls placeholder |
+| `/calls` | `CallsPage` | Browser microphone capture (KAN-10) |
 | `/history` | `CallHistoryPage` | History placeholder |
 | `/settings` | `SettingsPage` | Shows resolved API base URL |
 | `*` | redirect | → `/` |
@@ -44,14 +44,26 @@ Nav labels live in `src/utils/constants.ts` (`NAV_ITEMS`).
 
 Expected success body: `{ "status": "ok" }`.
 
+## Browser audio (local, no HTTP)
+
+| API | Helper |
+| --- | ------ |
+| `navigator.mediaDevices.getUserMedia` | `createAudioCaptureSession()` in `audioCapture.ts` |
+| Web Audio `ScriptProcessor` | PCM `pcm_f32le` chunks + peak level |
+
+See [`docs/voice/AUDIO_CAPTURE.md`](../voice/AUDIO_CAPTURE.md).
+
 ## Key modules
 
 | Module | Responsibility |
 | ------ | -------------- |
 | `services/apiClient.ts` | Base URL resolution, `apiGet`, `ApiError` |
 | `services/healthService.ts` | Typed health fetch |
+| `services/audioCapture.ts` | Mic permission, stream, PCM chunks, errors |
 | `hooks/useSystemStatus.ts` | Loading / healthy / error + 30s refresh |
+| `hooks/useMicrophoneCapture.ts` | Start/stop capture UI state |
 | `components/SystemStatusCard.tsx` | Status UI + refresh button |
+| `components/MicrophoneCapturePanel.tsx` | Start/Stop, meter, chunk summary |
 | `components/Sidebar.tsx` | Primary navigation |
 | `store/uiStore.tsx` | Sidebar open state for mobile |
 
@@ -67,7 +79,7 @@ Expected success body: `{ "status": "ok" }`.
 ## Extending the UI
 
 1. Add types under `src/types/`.
-2. Add service functions under `src/services/` using `apiClient`.
+2. Add service functions under `src/services/` using `apiClient` (HTTP) or dedicated modules (local device APIs).
 3. Add hooks if state/polling is shared.
 4. Add or extend a page under `src/pages/`.
 5. Register the route in `AppRoutes.tsx` and nav in `constants.ts`.
