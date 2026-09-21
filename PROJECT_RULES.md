@@ -21,6 +21,7 @@ Rules for humans and AI agents working on the **AI Voice Agent Frontend** reposi
     - Create a branch from `main` with one of: `feat/{title}`, `fix/{title}`, or `bugfix/{title}`.
     - Preferred full form: `{prefix}/{JIRA-KEY}-{short-kebab-title}` (e.g. `feat/KAN-9-project-knowledge-docs`, `fix/KAN-12-status-error-state`, `bugfix/KAN-15-history-crash`).
     - When pushing ticket work, push the feature branch and **open a pull request** (do not land ticket work by pushing straight to `main`).
-    - PR title should include the ticket key; PR body should summarize changes, list a short test plan, and link the Jira issue.
+    - PR title should include the ticket key.
+    - **Every PR body must include:** (1) a **high-level diagram** (Mermaid preferred), (2) a **description** of what/why with Jira link, and (3) **test cases** (ticket TCs + verification checklist). See [`.cursor/rules/git-jira-pr-workflow.mdc`](.cursor/rules/git-jira-pr-workflow.mdc) and [`.github/pull_request_template.md`](.github/pull_request_template.md).
 
 See also: [`docs/`](docs/), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md), [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md), [`.cursor/rules/git-jira-pr-workflow.mdc`](.cursor/rules/git-jira-pr-workflow.mdc), [`.cursor/rules/tests-and-knowledge.mdc`](.cursor/rules/tests-and-knowledge.mdc).

@@ -41,8 +41,32 @@ Rules:
 1. Commit on the feature branch (only when the user asks to commit, or when they ask to push/PR and a commit is required first).
 2. When the user asks to **push**, push the branch and **open a pull request** (do not push straight to `main` for ticket work).
 3. PR title should mirror the work and include the ticket, e.g. `feat(KAN-9): add project knowledge docs` or `[KAN-9] Add project knowledge docs`.
-4. PR body: short summary, test plan, and link to the Jira ticket when available.
+4. **PR body is mandatory** and must include all three sections below (plus a Jira link when available). Use Mermaid for the diagram when possible.
 5. Never force-push to `main`/`master`.
+
+### Required PR body sections
+
+Every PR description **must** contain these sections in order:
+
+#### 1. High-level diagram
+
+A Mermaid (or ASCII) diagram of the change: request/flow, main modules touched, or before→after. Keep it readable in GitHub.
+
+#### 2. Description
+
+What changed and why (scope in/out, key behavior, risks). Link the Jira ticket.
+
+#### 3. Test cases
+
+Concrete cases (IDs from the ticket when present) as a checklist or table: given / when / then, plus commands like `npm test` when relevant.
+
+**Template (required headings):**
+
+1. `## High-level diagram` — Mermaid `flowchart` (or clear ASCII) of the change
+2. `## Description` — what/why, scope, Jira link
+3. `## Test cases` — checklist or table (ticket TC-IDs when present) plus `npm test` / manual checks
+
+Repo template: [`.github/pull_request_template.md`](../../.github/pull_request_template.md).
 
 ## Quick checklist
 
@@ -50,5 +74,5 @@ Rules:
 - [ ] Branch named `feat|fix|bugfix/{KEY}-{title}`
 - [ ] Push goes to that branch
 - [ ] PR created after push
+- [ ] PR body has **diagram**, **description**, and **test cases**
 ---
-
