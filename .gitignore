@@ -2,6 +2,8 @@ node_modules/
 dist/
 coverage/
 .env
-.env.local
+.env.*
+!.env.example
+.cursor/mcp.json
 *.log
 .DS_Store
