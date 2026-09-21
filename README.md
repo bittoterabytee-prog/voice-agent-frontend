@@ -1,18 +1,19 @@
 # AI Voice Agent Frontend
 
-Frontend foundation for the AI Voice Agent POC dashboard ([KAN-6](https://voiceagentai.atlassian.net/browse/KAN-6), [KAN-9](https://voiceagentai.atlassian.net/browse/KAN-9)).
+Frontend foundation for the AI Voice Agent POC dashboard ([KAN-6](https://voiceagentai.atlassian.net/browse/KAN-6), [KAN-9](https://voiceagentai.atlassian.net/browse/KAN-9), [KAN-10](https://voiceagentai.atlassian.net/browse/KAN-10)).
 
-This app provides the monitoring and administration shell: routing, reusable layout components, API client integration, and placeholders for live calls, history, and system status.
+This app provides the monitoring and administration shell: routing, reusable layout components, API client integration, browser microphone capture, and placeholders for live call history and system status.
 
-## Project knowledge (KAN-9)
+## Project knowledge (KAN-9+)
 
 | Doc | Description |
 | --- | ----------- |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Frontend architecture overview |
 | [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md) | Dashboard ↔ backend flows |
-| [`PROJECT_RULES.md`](PROJECT_RULES.md) | Rules for humans and AI agents (Jira/branch/PR, tests, knowledge sync) |
+| [`PROJECT_RULES.md`](PROJECT_RULES.md) | Rules for humans and AI agents (Jira/branch/PR, required PR diagram + description + test cases, tests, knowledge sync) |
 | [`docs/testing/TESTING_STRATEGY.md`](docs/testing/TESTING_STRATEGY.md) | How we test and what to update for new work |
 | [`docs/frontend/FRONTEND_STRUCTURE.md`](docs/frontend/FRONTEND_STRUCTURE.md) | Folder and route map |
+| [`docs/voice/AUDIO_CAPTURE.md`](docs/voice/AUDIO_CAPTURE.md) | Mic capture + STT handoff format (KAN-10) |
 | [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md) | Read-only GitHub MCP setup |
 
 Full tree under [`docs/`](docs/).

@@ -2,9 +2,9 @@
 
 High-level architecture for the **AI Voice Agent Frontend** (operations dashboard).
 
-Related tickets: [KAN-6](https://voiceagentai.atlassian.net/browse/KAN-6), [KAN-9](https://voiceagentai.atlassian.net/browse/KAN-9).
+Related tickets: [KAN-6](https://voiceagentai.atlassian.net/browse/KAN-6), [KAN-9](https://voiceagentai.atlassian.net/browse/KAN-9), [KAN-10](https://voiceagentai.atlassian.net/browse/KAN-10).
 
-Companion backend repository: `voice-agent` (Express API). This repo contains **UI only**.
+Companion backend repository: `voice-agent` (Express API). This repo contains **UI** plus browser microphone capture for the POC.
 
 ## Stack
 
@@ -14,6 +14,7 @@ Companion backend repository: `voice-agent` (Express API). This repo contains **
 | Bundler / dev server | Vite 7 |
 | Routing | React Router 7 |
 | HTTP | `fetch` via `src/services/apiClient.ts` |
+| Mic capture | Web Audio (`getUserMedia` + `ScriptProcessor`) via `src/services/audioCapture.ts` |
 | Tests | Vitest + Testing Library |
 | Production serve | nginx (Docker) |
 
@@ -26,14 +27,16 @@ Companion backend repository: `voice-agent` (Express API). This repo contains **
 │  DashboardLayout + Sidebar                   │
 │       │                                      │
 │       ├── /          DashboardPage           │
-│       ├── /calls     CallsPage (placeholder) │
+│       ├── /calls     CallsPage + mic capture │
 │       ├── /history   CallHistoryPage         │
 │       └── /settings  SettingsPage            │
 │                                              │
 │  hooks/useSystemStatus ──► healthService     │
+│  hooks/useMicrophoneCapture ──► audioCapture │
 │                              │               │
 │                              ▼               │
 │                         apiClient.apiGet     │
+│                         MediaStream (local)  │
 └──────────────────────────────┬───────────────┘
                                │ HTTP
                                │ VITE_API_BASE_URL
@@ -53,6 +56,7 @@ Companion backend repository: `voice-agent` (Express API). This repo contains **
 | Routes | `src/routes/AppRoutes.tsx` |
 | Shell / nav | `src/layouts/DashboardLayout.tsx`, `src/components/Sidebar.tsx` |
 | Dashboard panels | `src/pages/DashboardPage.tsx` |
+| Browser mic capture | `src/services/audioCapture.ts`, `src/hooks/useMicrophoneCapture.ts`, `/calls` |
 | Backend base URL | `src/services/apiClient.ts` → `getApiBaseUrl()` |
 | Health check | `src/services/healthService.ts`, `src/hooks/useSystemStatus.ts` |
 | UI chrome state (sidebar) | `src/store/` |
@@ -61,8 +65,8 @@ Companion backend repository: `voice-agent` (Express API). This repo contains **
 
 ## What this frontend is (and is not)
 
-- **Is:** Monitoring / administration shell with routing, API client, System Status health probe, and placeholders for Active Calls / Recent Calls.
-- **Is not:** STT/TTS, conversation state machine, appointment booking tools, or PostgreSQL access. Those live in the **backend** repo.
+- **Is:** Monitoring / administration shell with routing, API client, System Status health probe, browser microphone capture (KAN-10), and placeholders for history / future live-call APIs.
+- **Is not:** STT/TTS, conversation state machine, appointment booking tools, telephony, or PostgreSQL access. Those live in the **backend** repo (except local mic PCM capture in the browser).
 
 ## Design principles
 
@@ -78,6 +82,7 @@ Companion backend repository: `voice-agent` (Express API). This repo contains **
 | End-to-end flow | [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md) |
 | Project rules | [`PROJECT_RULES.md`](PROJECT_RULES.md) |
 | MCP setup | [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md) |
+| Mic / STT handoff | [`docs/voice/AUDIO_CAPTURE.md`](docs/voice/AUDIO_CAPTURE.md) |
 | Frontend structure | [`docs/frontend/FRONTEND_STRUCTURE.md`](docs/frontend/FRONTEND_STRUCTURE.md) |
 | System architecture | [`docs/architecture/SYSTEM_ARCHITECTURE.md`](docs/architecture/SYSTEM_ARCHITECTURE.md) |
 | Data flow | [`docs/architecture/DATA_FLOW.md`](docs/architecture/DATA_FLOW.md) |

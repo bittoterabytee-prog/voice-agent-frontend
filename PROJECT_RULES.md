@@ -5,7 +5,7 @@ Rules for humans and AI agents working on the **AI Voice Agent Frontend** reposi
 1. **Backend is the source of truth for appointment availability, call records, and conversation state.** The UI must display API data — never invent slots, bookings, or call outcomes.
 2. **AI must never invent appointment availability** in UI copy, mocks shipped as “live”, or client-side logic that pretends slots exist without a backend response.
 3. **AI must never claim an appointment was booked** in the UI unless a booking API confirms success.
-4. **Do not implement voice STT/TTS or conversation state machines in this repo** unless a ticket explicitly moves that ownership here. Prefer the backend `voice-agent` repository.
+4. **Do not implement voice STT/TTS or conversation state machines in this repo** unless a ticket explicitly moves that ownership here. Prefer the backend `voice-agent` repository. **Exception (KAN-10):** browser microphone permission, MediaStream capture, level metering, and PCM chunk handoff for a future STT client are frontend-owned — see [`docs/voice/AUDIO_CAPTURE.md`](docs/voice/AUDIO_CAPTURE.md).
 5. **Medical diagnosis is outside the scope of the product.** Dashboard copy and future agent surfaces must not provide diagnosis.
 6. **Never expose API keys or secrets.** Do not commit `.env`, PATs, or credentials. Vite may only expose public `VITE_*` values.
 7. **Do not put secrets in documentation or MCP prompts.** Use placeholders such as `YOUR_GITHUB_PAT`.
@@ -21,6 +21,7 @@ Rules for humans and AI agents working on the **AI Voice Agent Frontend** reposi
     - Create a branch from `main` with one of: `feat/{title}`, `fix/{title}`, or `bugfix/{title}`.
     - Preferred full form: `{prefix}/{JIRA-KEY}-{short-kebab-title}` (e.g. `feat/KAN-9-project-knowledge-docs`, `fix/KAN-12-status-error-state`, `bugfix/KAN-15-history-crash`).
     - When pushing ticket work, push the feature branch and **open a pull request** (do not land ticket work by pushing straight to `main`).
-    - PR title should include the ticket key; PR body should summarize changes, list a short test plan, and link the Jira issue.
+    - PR title should include the ticket key.
+    - **Every PR body must include:** (1) a **high-level diagram** (Mermaid preferred), (2) a **description** of what/why with Jira link, and (3) **test cases** (ticket TCs + verification checklist). See [`.cursor/rules/git-jira-pr-workflow.mdc`](.cursor/rules/git-jira-pr-workflow.mdc) and [`.github/pull_request_template.md`](.github/pull_request_template.md).
 
 See also: [`docs/`](docs/), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md), [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md), [`.cursor/rules/git-jira-pr-workflow.mdc`](.cursor/rules/git-jira-pr-workflow.mdc), [`.cursor/rules/tests-and-knowledge.mdc`](.cursor/rules/tests-and-knowledge.mdc).
