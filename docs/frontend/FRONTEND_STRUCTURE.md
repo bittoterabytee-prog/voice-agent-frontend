@@ -1,13 +1,14 @@
 # Frontend Structure
 
-Folder map and responsibilities for `voice-agent-frontend` ([KAN-6](https://voiceagentai.atlassian.net/browse/KAN-6), [KAN-9](https://voiceagentai.atlassian.net/browse/KAN-9), [KAN-10](https://voiceagentai.atlassian.net/browse/KAN-10)).
+Folder map and responsibilities for `voice-agent-frontend` ([KAN-6](https://voiceagentai.atlassian.net/browse/KAN-6), [KAN-9](https://voiceagentai.atlassian.net/browse/KAN-9), [KAN-10](https://voiceagentai.atlassian.net/browse/KAN-10), [KAN-19](https://voiceagentai.atlassian.net/browse/KAN-19)).
 
 ## Tree
 
 ```
 src/
 ├── app/                 Application root (providers + router host)
-├── components/          Reusable presentational UI (incl. mic capture panel)
+├── components/          Reusable UI (mic panel, live call monitor, voice states)
+├── data/                Demo/mock payloads (live call + history until APIs land)
 ├── hooks/               Shared hooks (system status, microphone capture)
 ├── layouts/             Dashboard chrome (sidebar + outlet)
 ├── pages/               Route-level screens
@@ -16,7 +17,7 @@ src/
 ├── store/               Lightweight UI state (sidebar open/close)
 ├── styles/              Global CSS
 ├── types/               Shared TypeScript types
-├── utils/               Nav items, panel placeholders, formatters
+├── utils/               Nav items, voice UI mapping, formatters
 ├── main.tsx             DOM mount
 └── vite-env.d.ts        Vite env typings
 tests/                   Vitest + Testing Library
@@ -28,13 +29,15 @@ docs/                    Project knowledge (KAN-9+)
 
 | Path | Page | Role today |
 | ---- | ---- | ---------- |
-| `/` | `DashboardPage` | Overview panels + live System Status |
-| `/calls` | `CallsPage` | Browser microphone capture (KAN-10) |
-| `/history` | `CallHistoryPage` | History placeholder |
-| `/settings` | `SettingsPage` | Shows resolved API base URL |
+| `/` | `DashboardPage` | Live call monitor (SRD §33 demo) + voice legend + System Status |
+| `/calls` | `CallsPage` | Browser microphone capture (KAN-10) + voice state reference |
+| `/history` | `CallHistoryPage` | Recent appointment-agent sessions (demo table) |
+| `/settings` | `SettingsPage` | Shows resolved `VITE_API_BASE_URL` |
 | `*` | redirect | → `/` |
 
 Nav labels live in `src/utils/constants.ts` (`NAV_ITEMS`).
+
+UI/UX design handoff: [`docs/frontend/UI_UX_DESIGN.md`](UI_UX_DESIGN.md).
 
 ## HTTP surface used today
 
@@ -64,6 +67,11 @@ See [`docs/voice/AUDIO_CAPTURE.md`](../voice/AUDIO_CAPTURE.md).
 | `hooks/useMicrophoneCapture.ts` | Start/stop capture UI state |
 | `components/SystemStatusCard.tsx` | Status UI + refresh button |
 | `components/MicrophoneCapturePanel.tsx` | Start/Stop, meter, chunk summary |
+| `components/LiveCallMonitor.tsx` | SRD §33 live call fields + activity |
+| `components/VoiceStateIndicator.tsx` | idle / listening / speaking / error chrome |
+| `components/RecentCallsTable.tsx` | History / recent sessions table |
+| `data/demoCallMonitor.ts` | Demo live call + history until live APIs |
+| `utils/voiceUi.ts` | Conversation state → voice chrome mapping |
 | `components/Sidebar.tsx` | Primary navigation |
 | `store/uiStore.tsx` | Sidebar open state for mobile |
 
@@ -84,4 +92,4 @@ See [`docs/voice/AUDIO_CAPTURE.md`](../voice/AUDIO_CAPTURE.md).
 4. Add or extend a page under `src/pages/`.
 5. Register the route in `AppRoutes.tsx` and nav in `constants.ts`.
 6. Add tests under `tests/`.
-7. Update docs if architecture changes.
+7. Update docs if architecture changes (including [`UI_UX_DESIGN.md`](UI_UX_DESIGN.md) when screens/flows change).

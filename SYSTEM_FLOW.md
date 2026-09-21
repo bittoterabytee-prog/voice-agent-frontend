@@ -17,9 +17,9 @@ React app boots
       ▼
 DashboardLayout + Sidebar navigation
       │
-      ├── /          Overview panels
-      ├── /calls     Microphone capture (KAN-10) + future live calls
-      ├── /history   Call history placeholder
+      ├── /          Live call monitor (KAN-19 demo) + System Status
+      ├── /calls     Microphone capture (KAN-10) + voice UI states
+      ├── /history   Call history table (KAN-19 demo)
       └── /settings  Shows resolved VITE_API_BASE_URL
       │
       ▼
@@ -46,22 +46,26 @@ getUserMedia + Web Audio ScriptProcessor
 
 Chunk handoff format for future STT: [`docs/voice/AUDIO_CAPTURE.md`](docs/voice/AUDIO_CAPTURE.md).
 
-## Intended future: live call monitoring (partial)
+## Live call monitoring UI (KAN-19)
+
+Design handoff: [`docs/frontend/UI_UX_DESIGN.md`](docs/frontend/UI_UX_DESIGN.md).
 
 ```
-Backend call / conversation APIs (backend repo)
+Operator opens /
       │
       ▼
-Frontend services (to be added under src/services/)
+LiveCallMonitor renders SRD §33 fields
+  (status, language, state, intent, wait, tools, appointment, handoff, duration, errors)
+      │
+      ├── Demo payload: src/data/demoCallMonitor.ts
+      └── Future: replace with WebSocket / SSE / REST call feed
       │
       ▼
-Calls / History pages replace remaining placeholders
-      │
-      ▼
-Panels show active calls, transcripts, tool activity, errors
+Activity timeline shows operational state transitions
+  (no private chain-of-thought)
 ```
 
-Until those APIs are wired, **do not fabricate live call lists** in the UI. Local mic capture does not invent backend call records.
+Until live APIs are wired, the monitor uses **clearly labeled demo data** so screens and components are implementation-ready. Demo rows must not be treated as real bookings.
 
 ## Appointment / booking (frontend role)
 
