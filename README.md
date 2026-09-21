@@ -10,7 +10,8 @@ This app provides the monitoring and administration shell: routing, reusable lay
 | --- | ----------- |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Frontend architecture overview |
 | [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md) | Dashboard ↔ backend flows |
-| [`PROJECT_RULES.md`](PROJECT_RULES.md) | Rules for humans and AI agents (includes Jira / branch / PR naming) |
+| [`PROJECT_RULES.md`](PROJECT_RULES.md) | Rules for humans and AI agents (Jira/branch/PR, tests, knowledge sync) |
+| [`docs/testing/TESTING_STRATEGY.md`](docs/testing/TESTING_STRATEGY.md) | How we test and what to update for new work |
 | [`docs/frontend/FRONTEND_STRUCTURE.md`](docs/frontend/FRONTEND_STRUCTURE.md) | Folder and route map |
 | [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md) | Read-only GitHub MCP setup |
 

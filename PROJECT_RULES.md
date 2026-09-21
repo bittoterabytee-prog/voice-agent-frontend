@@ -11,9 +11,9 @@ Rules for humans and AI agents working on the **AI Voice Agent Frontend** reposi
 7. **Do not put secrets in documentation or MCP prompts.** Use placeholders such as `YOUR_GITHUB_PAT`.
 8. **External HTTP access must go through `src/services/`** (e.g. `apiClient.ts`). Do not scatter raw `fetch` calls with hard-coded base URLs across components.
 9. **Configuration is env-driven.** Backend URL comes from `VITE_API_BASE_URL` (see `.env.example`). Do not require source edits to point at another API host.
-10. **All new UI features must include test scenarios** under `tests/` (component or unit).
+10. **Tests are mandatory for product changes.** Before coding, review related cases under `tests/`. Add or update tests for every feature, fix, or regression. Run `npm test` before finishing. Docs/rules-only edits may skip product tests. See [`docs/testing/TESTING_STRATEGY.md`](docs/testing/TESTING_STRATEGY.md) and [`.cursor/rules/tests-and-knowledge.mdc`](.cursor/rules/tests-and-knowledge.mdc).
 11. **Preserve the dashboard shell structure** (layout, nav, panels) when adding features; prefer extending pages/services over one-off pages outside routing.
-12. **When architectural behavior changes**, update matching docs under `docs/` and root `ARCHITECTURE.md` / `SYSTEM_FLOW.md` / `PROJECT_RULES.md`.
+12. **Keep knowledge in sync with every change.** Update matching docs in the same change set: `docs/**`, root `ARCHITECTURE.md` / `SYSTEM_FLOW.md` / `PROJECT_RULES.md`, and Cursor rules under `.cursor/rules/` when workflow changes. Do not leave docs stale after behavior or structure shifts.
 13. **MCP GitHub access is read-only by default.** Do not enable write toolsets unless explicitly approved.
 14. **Handle backend unavailability gracefully.** System Status and future data views must show error/loading states — never crash the shell.
 15. **Jira, branch, and PR workflow (required for all ticket work):**
@@ -23,4 +23,4 @@ Rules for humans and AI agents working on the **AI Voice Agent Frontend** reposi
     - When pushing ticket work, push the feature branch and **open a pull request** (do not land ticket work by pushing straight to `main`).
     - PR title should include the ticket key; PR body should summarize changes, list a short test plan, and link the Jira issue.
 
-See also: [`docs/`](docs/), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md), [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md), [`.cursor/rules/git-jira-pr-workflow.mdc`](.cursor/rules/git-jira-pr-workflow.mdc).
+See also: [`docs/`](docs/), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md), [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md), [`.cursor/rules/git-jira-pr-workflow.mdc`](.cursor/rules/git-jira-pr-workflow.mdc), [`.cursor/rules/tests-and-knowledge.mdc`](.cursor/rules/tests-and-knowledge.mdc).

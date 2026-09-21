@@ -1,0 +1,38 @@
+---
+description: Require tests and knowledge doc updates for every change
+alwaysApply: true
+---
+
+# Tests and knowledge updates
+
+For **every** code or behavior change in this repo:
+
+## Tests (required)
+
+1. **Before changing code**, find and read related tests under `tests/` (and update [`docs/testing/TESTING_STRATEGY.md`](docs/testing/TESTING_STRATEGY.md) awareness).
+2. **Add or update tests** for the change — new behavior, bugfix, or regression. Do not ship feature/fix work without covering it.
+3. Prefer extending existing suites (`tests/App.test.tsx`, `tests/apiClient.test.ts`, etc.) when the area already has coverage; add a new file when the surface is new.
+4. Mock `fetch` / backend — do not call a real API in unit/component tests.
+5. Run the relevant tests (`npm test`) before considering the work done; fix failures you introduce.
+6. Docs-only or rule-only edits do not need new product tests, but call that out briefly.
+
+## Knowledge / docs (required)
+
+1. **Update project knowledge** to match what changed — do not leave docs stale.
+2. Pick the right place(s):
+   - Behavior / architecture → `ARCHITECTURE.md`, `SYSTEM_FLOW.md`, and/or `docs/**`
+   - Agent / human rules → `PROJECT_RULES.md` and `.cursor/rules/` when workflow changes
+   - Testing approach or new suites → `docs/testing/TESTING_STRATEGY.md`
+   - Frontend structure / routes → `docs/frontend/FRONTEND_STRUCTURE.md`
+   - README index table when adding major top-level docs
+3. Keep updates proportional: change the sections that are wrong or missing; do not rewrite unrelated docs.
+4. If a change is user-facing or structural, update knowledge in the **same** change set as the code/tests.
+
+## Done checklist
+
+- [ ] Related existing tests reviewed
+- [ ] New/updated tests cover the change
+- [ ] Tests run (or docs-only exception noted)
+- [ ] Matching knowledge docs updated
+---
+

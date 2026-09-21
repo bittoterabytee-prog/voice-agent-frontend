@@ -17,10 +17,12 @@
 
 ## Expectations for new work
 
-1. Add or extend tests when changing routes, services, or System Status behavior.
-2. Mock `fetch` — do not hit a real backend in unit/component tests.
-3. Prefer `data-testid` hooks already used (`dashboard-page`, `system-status`, etc.).
-4. Keep lint/format/build green (`npm run lint`, `npm test`, `npm run build`).
+1. **Before changing code**, review related existing tests under `tests/`.
+2. **Add or extend tests** for every product change (routes, services, UI behavior, bug fixes). Same change set as the code.
+3. Mock `fetch` — do not hit a real backend in unit/component tests.
+4. Prefer `data-testid` hooks already used (`dashboard-page`, `system-status`, etc.).
+5. Run `npm test` (and keep lint/format/build green: `npm run lint`, `npm run build`).
+6. **Update knowledge** when behavior or coverage changes: this file, plus matching `docs/**` / root architecture docs / `PROJECT_RULES.md` as needed. See [`.cursor/rules/tests-and-knowledge.mdc`](../../.cursor/rules/tests-and-knowledge.mdc).
 
 ## Manual checks
 
