@@ -16,5 +16,11 @@ Rules for humans and AI agents working on the **AI Voice Agent Frontend** reposi
 12. **When architectural behavior changes**, update matching docs under `docs/` and root `ARCHITECTURE.md` / `SYSTEM_FLOW.md` / `PROJECT_RULES.md`.
 13. **MCP GitHub access is read-only by default.** Do not enable write toolsets unless explicitly approved.
 14. **Handle backend unavailability gracefully.** System Status and future data views must show error/loading states — never crash the shell.
+15. **Jira, branch, and PR workflow (required for all ticket work):**
+    - Before starting work, **ask for the Jira ticket number** if it is not already provided; if it is known, use it.
+    - Create a branch from `main` with one of: `feat/{title}`, `fix/{title}`, or `bugfix/{title}`.
+    - Preferred full form: `{prefix}/{JIRA-KEY}-{short-kebab-title}` (e.g. `feat/KAN-9-project-knowledge-docs`, `fix/KAN-12-status-error-state`, `bugfix/KAN-15-history-crash`).
+    - When pushing ticket work, push the feature branch and **open a pull request** (do not land ticket work by pushing straight to `main`).
+    - PR title should include the ticket key; PR body should summarize changes, list a short test plan, and link the Jira issue.
 
-See also: [`docs/`](docs/), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md), [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md).
+See also: [`docs/`](docs/), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md), [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md), [`.cursor/rules/git-jira-pr-workflow.mdc`](.cursor/rules/git-jira-pr-workflow.mdc).

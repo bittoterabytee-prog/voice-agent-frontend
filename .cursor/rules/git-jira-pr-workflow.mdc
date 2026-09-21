@@ -1,0 +1,54 @@
+---
+description: Jira ticket, branch naming, and PR workflow for all work
+alwaysApply: true
+---
+
+# Git / Jira / PR workflow
+
+## Before starting work
+
+1. If the user has not given a **Jira ticket key** (e.g. `KAN-12`), **ask for it** before coding, branching, or committing feature work.
+2. If the ticket is already known from the message, links, or prior context, use it — do not ask again.
+3. Prefer one ticket per branch.
+
+## Branch naming
+
+Create a branch from the latest `main` (or the agreed base) using:
+
+| Prefix | Use when |
+| --- | --- |
+| `feat/` | New feature or capability |
+| `fix/` | Correcting broken or incorrect behavior |
+| `bugfix/` | Explicit bug ticket / defect fix |
+
+**Format:** `{prefix}/{jira-key}-{short-kebab-title}`
+
+Examples:
+
+- `feat/KAN-9-project-knowledge-docs`
+- `fix/KAN-12-status-panel-error-state`
+- `bugfix/KAN-15-history-table-crash`
+
+Rules:
+
+- Lowercase kebab-case for the title segment.
+- Include the Jira key in the branch name.
+- Keep the title short (roughly 3–6 words).
+- Do not use spaces, underscores, or vague names like `feat/updates`.
+
+## Commit, push, and PR
+
+1. Commit on the feature branch (only when the user asks to commit, or when they ask to push/PR and a commit is required first).
+2. When the user asks to **push**, push the branch and **open a pull request** (do not push straight to `main` for ticket work).
+3. PR title should mirror the work and include the ticket, e.g. `feat(KAN-9): add project knowledge docs` or `[KAN-9] Add project knowledge docs`.
+4. PR body: short summary, test plan, and link to the Jira ticket when available.
+5. Never force-push to `main`/`master`.
+
+## Quick checklist
+
+- [ ] Jira key known (asked if missing)
+- [ ] Branch named `feat|fix|bugfix/{KEY}-{title}`
+- [ ] Push goes to that branch
+- [ ] PR created after push
+---
+
