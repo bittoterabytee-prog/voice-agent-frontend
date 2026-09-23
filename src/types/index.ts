@@ -63,8 +63,69 @@ export type ConversationState =
   | "CALL_ENDING"
   | "IDLE";
 
-/** Browser-facing voice chrome states (KAN-19 TC-002). */
-export type VoiceUiState = "idle" | "listening" | "speaking" | "error";
+/** Browser-facing voice chrome states (KAN-16 / KAN-19). */
+export type VoiceUiState = "idle" | "listening" | "processing" | "speaking" | "error";
+
+export type VoiceTurnTtsError = {
+  code: string;
+  message: string;
+  service: string;
+};
+
+export type VoiceTurnRequest = {
+  audioBase64: string;
+  mimeType?: string;
+  fileName?: string;
+  sessionId?: string;
+  conversationId?: string;
+  callId?: string;
+  voice?: string;
+};
+
+export type VoiceTurnResponse = {
+  transcript: string;
+  replyText: string;
+  conversationId?: string;
+  sessionId?: string;
+  callId?: string;
+  currentState?: string;
+  action?: "continue" | "waited" | "resumed";
+  audioBase64?: string;
+  mimeType?: string;
+  ttsError?: VoiceTurnTtsError;
+};
+
+export type SessionSnapshot = {
+  callId: string;
+  conversationId: string;
+  callerNumber: string;
+  language: string;
+  callStatus: string;
+  currentState: string;
+  intent: string | null;
+  turns: unknown[];
+  messages: unknown[];
+};
+
+export type VoiceConversationTurn = {
+  id: string;
+  transcript: string;
+  replyText: string;
+  ttsNotice: string | null;
+};
+
+export type VoiceAgentPhase = VoiceUiState;
+
+export type VoiceAgentStatus = {
+  phase: VoiceAgentPhase;
+  message: string;
+  level: number;
+  callId: string | null;
+  conversationId: string | null;
+  sessionId: string | null;
+  turns: VoiceConversationTurn[];
+  errorCode: string | null;
+};
 
 export type CallConnectionStatus = "idle" | "ringing" | "connected" | "ended" | "failed";
 

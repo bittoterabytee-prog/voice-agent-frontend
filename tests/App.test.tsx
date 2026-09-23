@@ -41,9 +41,21 @@ describe("dashboard foundation", () => {
     expect(screen.getByText(/State → WAITING_FOR_USER/)).toBeInTheDocument();
     expect(screen.getByTestId("voice-state-legend")).toBeInTheDocument();
     expect(screen.getByText("Listening")).toBeInTheDocument();
+    expect(screen.getAllByText("Processing").length).toBeGreaterThan(0);
     expect(screen.getByText("Speaking")).toBeInTheDocument();
     expect(screen.getByText("Error")).toBeInTheDocument();
     expect(screen.getAllByText("Idle / waiting").length).toBeGreaterThan(0);
+  });
+
+  it("KAN-16 voice agent panel is available on Calls", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("link", { name: "Calls" }));
+    expect(await screen.findByTestId("calls-page")).toBeInTheDocument();
+    expect(screen.getByTestId("voice-agent")).toBeInTheDocument();
+    expect(screen.getByTestId("voice-start")).toBeInTheDocument();
+    expect(screen.getByTestId("mic-capture")).toBeInTheDocument();
   });
 
   it("KAN-19 call history lists demo appointment sessions", async () => {

@@ -2,7 +2,7 @@
 
 End-to-end flows as seen from the **frontend dashboard** repository.
 
-> STT/TTS, LLM, tools, and PostgreSQL run in the companion **backend** repo (`voice-agent`). Browser microphone capture (KAN-10) runs in this frontend. This document describes what the UI does today and how it will attach to backend flows later.
+> STT/TTS, LLM, tools, and PostgreSQL run in the companion **backend** repo (`voice-agent`). Browser microphone capture (KAN-10) and voice-turn UI (KAN-16) run in this frontend. This document describes what the UI does today and how it attaches to backend flows.
 
 ## Primary flow (dashboard ↔ backend)
 
@@ -18,7 +18,7 @@ React app boots
 DashboardLayout + Sidebar navigation
       │
       ├── /          Live call monitor (KAN-19 demo) + System Status
-      ├── /calls     Microphone capture (KAN-10) + voice UI states
+      ├── /calls     Voice agent (KAN-16) + mic diagnostics (KAN-10) + voice states
       ├── /history   Call history table (KAN-19 demo)
       └── /settings  Shows resolved VITE_API_BASE_URL
       │
@@ -31,10 +31,30 @@ Dashboard System Status panel
       └── loading                 → Checking…
 ```
 
+## Browser voice agent (KAN-16)
+
+```
+Operator opens /calls → Voice agent → Start
+      │
+      ▼
+POST /api/sessions → callId
+      │
+      ▼
+MediaRecorder clip capture (mic permission)
+      │
+      ├── Send turn → base64 → POST /api/voice/turn
+      │                 ├── show transcript + replyText
+      │                 ├── play audioBase64 (or ttsError notice)
+      │                 └── resume listening
+      └── Stop → idle; POST /api/sessions/:callId/complete
+```
+
+No WebSocket in Sprint 2. Details: [`docs/architecture/VOICE_PIPELINE.md`](docs/architecture/VOICE_PIPELINE.md).
+
 ## Browser microphone capture (KAN-10)
 
 ```
-Operator opens /calls → Start
+Operator opens /calls → Microphone Capture → Start
       │
       ▼
 getUserMedia + Web Audio ScriptProcessor
@@ -44,7 +64,7 @@ getUserMedia + Web Audio ScriptProcessor
       └── Stop → tracks stopped, AudioContext closed
 ```
 
-Chunk handoff format for future STT: [`docs/voice/AUDIO_CAPTURE.md`](docs/voice/AUDIO_CAPTURE.md).
+Chunk handoff format: [`docs/voice/AUDIO_CAPTURE.md`](docs/voice/AUDIO_CAPTURE.md).
 
 ## Live call monitoring UI (KAN-19)
 

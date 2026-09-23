@@ -19,6 +19,9 @@
 | Network errors | `tests/apiClient.test.ts` | `ApiError` wrapping |
 | Mic capture session | `tests/audioCapture.test.ts` | KAN-10 TC-001–004 (permission, chunks, stop, no device) |
 | Mic capture UI | `tests/MicrophoneCapturePanel.test.tsx` | Start/Stop, errors, chunk/level display |
+| Voice agent UI | `tests/VoiceAgentPanel.test.tsx` | KAN-16 TC-001–006 (listen, transcript, TTS, soft/hard errors, stop) |
+| Audio playback | `tests/audioPlayback.test.ts` | base64 → blob + play cleanup |
+| API POST / errors | `tests/apiClient.test.ts` | `apiPost`, backend error envelope |
 
 ## Expectations for new work
 
@@ -35,4 +38,5 @@
 - With backend down, System Status shows Unavailable.
 - With backend up on `VITE_API_BASE_URL`, status shows Healthy.
 - Resize viewport: sidebar collapses behind Menu on narrow screens.
-- On `/calls`, Start requests mic permission; Stop releases the device; deny/block shows an error message.
+- On `/calls`, Voice agent Start opens a session and listens; Send turn posts audio; Stop releases the mic.
+- On `/calls`, Microphone Capture Start/Stop still exercises low-level PCM diagnostics.
