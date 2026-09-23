@@ -17,7 +17,7 @@ This app provides the monitoring and administration shell: routing, reusable lay
 | [`docs/voice/AUDIO_CAPTURE.md`](docs/voice/AUDIO_CAPTURE.md) | Mic capture + STT handoff format (KAN-10) |
 | [`docs/architecture/VOICE_PIPELINE.md`](docs/architecture/VOICE_PIPELINE.md) | Browser voice turn path (KAN-16) |
 | [`docs/backend/API_DOCUMENTATION.md`](docs/backend/API_DOCUMENTATION.md) | Frontend-facing HTTP contracts |
-| [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md) | Read-only GitHub MCP setup |
+| Shared MCP + FE/BE knowledge | https://github.com/bittoterabytee-prog/voice-agent-knowledge |
 
 Full tree under [`docs/`](docs/).
 

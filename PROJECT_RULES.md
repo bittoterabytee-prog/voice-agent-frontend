@@ -24,4 +24,4 @@ Rules for humans and AI agents working on the **AI Voice Agent Frontend** reposi
     - PR title should include the ticket key.
     - **Every PR body must include:** (1) a **high-level diagram** (Mermaid preferred), (2) a **description** of what/why with Jira link, and (3) **test cases** (ticket TCs + verification checklist). See [`.cursor/rules/git-jira-pr-workflow.mdc`](.cursor/rules/git-jira-pr-workflow.mdc) and [`.github/pull_request_template.md`](.github/pull_request_template.md).
 
-See also: [`docs/`](docs/), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md), [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md), [`.cursor/rules/git-jira-pr-workflow.mdc`](.cursor/rules/git-jira-pr-workflow.mdc), [`.cursor/rules/tests-and-knowledge.mdc`](.cursor/rules/tests-and-knowledge.mdc).
+See also: [`docs/`](docs/), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md), shared MCP knowledge https://github.com/bittoterabytee-prog/voice-agent-knowledge, [`.cursor/rules/git-jira-pr-workflow.mdc`](.cursor/rules/git-jira-pr-workflow.mdc), [`.cursor/rules/tests-and-knowledge.mdc`](.cursor/rules/tests-and-knowledge.mdc).
