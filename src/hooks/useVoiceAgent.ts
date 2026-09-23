@@ -18,6 +18,9 @@ const initialStatus: VoiceAgentStatus = {
   conversationId: null,
   sessionId: null,
   turns: [],
+  lastPipeline: null,
+  lastCost: null,
+  sessionEstimatedUsd: 0,
   errorCode: null,
 };
 
@@ -91,16 +94,19 @@ export function useVoiceAgent() {
     sessionIdRef.current = newSessionId();
     activeRef.current = true;
 
-    setStatus({
-      phase: "processing",
-      message: "Starting session…",
-      level: 0,
-      callId: null,
-      conversationId: null,
-      sessionId: sessionIdRef.current,
-      turns: [],
-      errorCode: null,
-    });
+      setStatus({
+        phase: "processing",
+        message: "Starting session…",
+        level: 0,
+        callId: null,
+        conversationId: null,
+        sessionId: sessionIdRef.current,
+        turns: [],
+        lastPipeline: null,
+        lastCost: null,
+        sessionEstimatedUsd: 0,
+        errorCode: null,
+      });
 
     try {
       const snapshot = await startSession({ callerNumber: "browser", language: "en" });
@@ -124,6 +130,9 @@ export function useVoiceAgent() {
         conversationId: snapshot.conversationId,
         sessionId: sessionIdRef.current,
         turns: [],
+        lastPipeline: null,
+        lastCost: null,
+        sessionEstimatedUsd: 0,
         errorCode: null,
       });
     } catch (error) {
@@ -138,6 +147,9 @@ export function useVoiceAgent() {
         conversationId: null,
         sessionId: sessionIdRef.current,
         turns: [],
+        lastPipeline: null,
+        lastCost: null,
+        sessionEstimatedUsd: 0,
         errorCode: code,
       });
     }
@@ -223,19 +235,29 @@ export function useVoiceAgent() {
         ? `Audio playback unavailable (${response.ttsError.message}). Showing text reply.`
         : null;
 
+      const turnCost = response.cost ?? null;
       const turn: VoiceConversationTurn = {
         id: `${Date.now()}-${turnsRef.current.length}`,
         transcript: response.transcript,
         replyText: response.replyText,
         ttsNotice,
+        pipeline: response.pipeline ?? null,
+        cost: turnCost,
       };
       turnsRef.current = [...turnsRef.current, turn];
+      const sessionEstimatedUsd = turnsRef.current.reduce(
+        (sum, item) => sum + (item.cost?.estimatedUsd ?? 0),
+        0,
+      );
 
       const baseStatus = {
         callId: callIdRef.current,
         conversationId: conversationIdRef.current,
         sessionId: sessionIdRef.current,
         turns: turnsRef.current,
+        lastPipeline: response.pipeline ?? null,
+        lastCost: turnCost,
+        sessionEstimatedUsd,
         errorCode: null as string | null,
         level: 0,
       };
@@ -278,6 +300,12 @@ export function useVoiceAgent() {
           : "Listening — speak, then press Send turn.",
         level: 0,
         turns: turnsRef.current,
+        lastPipeline: turnsRef.current[turnsRef.current.length - 1]?.pipeline ?? null,
+        lastCost: turnsRef.current[turnsRef.current.length - 1]?.cost ?? null,
+        sessionEstimatedUsd: turnsRef.current.reduce(
+          (sum, item) => sum + (item.cost?.estimatedUsd ?? 0),
+          0,
+        ),
         callId: callIdRef.current,
         conversationId: conversationIdRef.current,
         sessionId: sessionIdRef.current,
@@ -291,6 +319,12 @@ export function useVoiceAgent() {
         message,
         level: 0,
         turns: turnsRef.current,
+        lastPipeline: turnsRef.current[turnsRef.current.length - 1]?.pipeline ?? null,
+        lastCost: turnsRef.current[turnsRef.current.length - 1]?.cost ?? null,
+        sessionEstimatedUsd: turnsRef.current.reduce(
+          (sum, item) => sum + (item.cost?.estimatedUsd ?? 0),
+          0,
+        ),
         callId: callIdRef.current,
         conversationId: conversationIdRef.current,
         sessionId: sessionIdRef.current,
@@ -330,6 +364,12 @@ export function useVoiceAgent() {
       conversationId: conversationIdRef.current,
       sessionId: sessionIdRef.current,
       turns: turnsRef.current,
+      lastPipeline: turnsRef.current[turnsRef.current.length - 1]?.pipeline ?? null,
+      lastCost: turnsRef.current[turnsRef.current.length - 1]?.cost ?? null,
+      sessionEstimatedUsd: turnsRef.current.reduce(
+        (sum, item) => sum + (item.cost?.estimatedUsd ?? 0),
+        0,
+      ),
       errorCode: null,
     });
   }, [disposeRecorder, stopPlayback]);

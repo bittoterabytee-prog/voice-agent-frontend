@@ -7,12 +7,42 @@ describe("dashboard foundation", () => {
   beforeEach(() => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () =>
-        Promise.resolve({
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/api/sessions/") && url.includes("/events")) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: async () => ({ callId: "call-1", events: [] }),
+          });
+        }
+        if (url.includes("/api/sessions")) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: async () => ({
+              sessions: [
+                {
+                  callId: "call-history-live-1",
+                  callerNumber: "browser",
+                  language: "en",
+                  callStatus: "COMPLETED",
+                  currentState: "CALL_COMPLETED",
+                  intent: null,
+                  startTime: "2026-09-23T05:00:00.000Z",
+                  endTime: "2026-09-23T05:05:00.000Z",
+                  durationMs: 300000,
+                },
+              ],
+            }),
+          });
+        }
+        return Promise.resolve({
           ok: true,
+          status: 200,
           json: async () => ({ status: "ok" }),
-        }),
-      ),
+        });
+      }),
     );
   });
 
@@ -58,15 +88,15 @@ describe("dashboard foundation", () => {
     expect(screen.getByTestId("mic-capture")).toBeInTheDocument();
   });
 
-  it("KAN-19 call history lists demo appointment sessions", async () => {
+  it("KAN-18 call history loads live sessions from the backend", async () => {
     const user = userEvent.setup();
     render(<App />);
 
     await user.click(screen.getByRole("link", { name: "Call History" }));
     expect(await screen.findByTestId("history-page")).toBeInTheDocument();
-    expect(screen.getByTestId("recent-calls-table")).toBeInTheDocument();
-    expect(screen.getByText(/Booked — Dr. Mehta/)).toBeInTheDocument();
-    expect(screen.getByText(/Human handoff/)).toBeInTheDocument();
+    expect(await screen.findByTestId("history-sessions-table")).toBeInTheDocument();
+    expect(screen.getByText("CALL_COMPLETED")).toBeInTheDocument();
+    expect(screen.getByTestId("history-logs-empty")).toBeInTheDocument();
   });
 
   it("TC-003 navigates between primary routes", async () => {

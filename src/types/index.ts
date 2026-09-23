@@ -72,6 +72,19 @@ export type VoiceTurnTtsError = {
   service: string;
 };
 
+export type PipelineStageSummary = {
+  stage: "stt" | "llm" | "tts" | "session" | "turn";
+  outcome: "success" | "failure";
+  durationMs: number;
+  softFail?: boolean;
+  code?: string;
+};
+
+export type PipelineTrace = {
+  requestId: string;
+  stages: PipelineStageSummary[];
+};
+
 export type VoiceTurnRequest = {
   audioBase64: string;
   mimeType?: string;
@@ -88,11 +101,35 @@ export type VoiceTurnResponse = {
   conversationId?: string;
   sessionId?: string;
   callId?: string;
+  requestId?: string;
   currentState?: string;
   action?: "continue" | "waited" | "resumed";
   audioBase64?: string;
   mimeType?: string;
   ttsError?: VoiceTurnTtsError;
+  pipeline?: PipelineTrace;
+  cost?: TurnCostEstimate;
+};
+
+export type StageUsageEstimate = {
+  stage: "stt" | "llm" | "tts";
+  estimatedUsd: number;
+  details: Record<string, number | string>;
+};
+
+export type TurnCostEstimate = {
+  currency: "USD";
+  estimatedUsd: number;
+  breakdown: StageUsageEstimate[];
+  note: string;
+};
+
+export type SpendSummary = {
+  currency: "USD";
+  estimatedUsdTotal: number;
+  turnCount: number;
+  callCount: number;
+  note: string;
 };
 
 export type SessionSnapshot = {
@@ -107,11 +144,34 @@ export type SessionSnapshot = {
   messages: unknown[];
 };
 
+export type SessionHistoryItem = {
+  callId: string;
+  callerNumber: string;
+  language: string;
+  callStatus: string;
+  currentState: string | null;
+  intent: string | null;
+  startTime: string;
+  endTime: string | null;
+  durationMs: number;
+  estimatedUsd: number;
+};
+
+export type SessionEventItem = {
+  id: string;
+  callId: string;
+  eventType: string;
+  timestamp: string;
+  metadata: Record<string, unknown>;
+};
+
 export type VoiceConversationTurn = {
   id: string;
   transcript: string;
   replyText: string;
   ttsNotice: string | null;
+  pipeline: PipelineTrace | null;
+  cost: TurnCostEstimate | null;
 };
 
 export type VoiceAgentPhase = VoiceUiState;
@@ -124,6 +184,9 @@ export type VoiceAgentStatus = {
   conversationId: string | null;
   sessionId: string | null;
   turns: VoiceConversationTurn[];
+  lastPipeline: PipelineTrace | null;
+  lastCost: TurnCostEstimate | null;
+  sessionEstimatedUsd: number;
   errorCode: string | null;
 };
 

@@ -134,6 +134,15 @@ describe("VoiceAgentPanel (KAN-16)", () => {
       sessionId: "browser-1",
       audioBase64: "BQQD",
       mimeType: "audio/mpeg",
+      requestId: "req-ui-1",
+      pipeline: {
+        requestId: "req-ui-1",
+        stages: [
+          { stage: "stt", outcome: "success", durationMs: 120 },
+          { stage: "llm", outcome: "success", durationMs: 340 },
+          { stage: "tts", outcome: "success", durationMs: 210 },
+        ],
+      },
     };
     postVoiceTurnMock.mockResolvedValue(turn);
 
@@ -156,6 +165,59 @@ describe("VoiceAgentPanel (KAN-16)", () => {
         "I need an appointment",
       );
       expect(screen.getByTestId("voice-turn-reply")).toHaveTextContent("I can help you schedule.");
+    });
+  });
+
+  it("TC-006 shows pipeline stage logs from the turn response", async () => {
+    postVoiceTurnMock.mockResolvedValue({
+      transcript: "Hello",
+      replyText: "Hi there",
+      audioBase64: "BQQD",
+      mimeType: "audio/mpeg",
+      conversationId: "conv-1",
+      callId: "call-1",
+      requestId: "req-pipeline",
+      pipeline: {
+        requestId: "req-pipeline",
+        stages: [
+          { stage: "stt", outcome: "success", durationMs: 100 },
+          { stage: "llm", outcome: "success", durationMs: 200 },
+          { stage: "tts", outcome: "success", durationMs: 300 },
+        ],
+      },
+      cost: {
+        currency: "USD",
+        estimatedUsd: 0.00042,
+        breakdown: [
+          { stage: "stt", estimatedUsd: 0.0001, details: {} },
+          { stage: "llm", estimatedUsd: 0.0002, details: {} },
+          { stage: "tts", estimatedUsd: 0.00012, details: {} },
+        ],
+        note: "Estimated from public OpenAI list prices for this POC; not a live wallet balance.",
+      },
+    } satisfies VoiceTurnResponse);
+
+    const user = userEvent.setup();
+    renderCallsPage();
+    expect(screen.getByTestId("voice-pipeline-empty")).toBeInTheDocument();
+    expect(screen.getByTestId("voice-session-cost")).toHaveTextContent("$0.0000");
+
+    await user.click(screen.getByTestId("voice-start"));
+    await waitFor(() => expect(screen.getByTestId("voice-send-turn")).toBeEnabled());
+    await user.click(screen.getByTestId("voice-send-turn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("voice-pipeline-request-id")).toHaveTextContent(
+        "requestId: req-pipeline",
+      );
+      const stages = screen.getAllByTestId("voice-pipeline-stage");
+      expect(stages).toHaveLength(3);
+      expect(stages[0]).toHaveTextContent(/STT · success · 100ms/i);
+      expect(stages[1]).toHaveTextContent(/LLM · success · 200ms/i);
+      expect(stages[2]).toHaveTextContent(/TTS · success · 300ms/i);
+      expect(screen.getByTestId("voice-turn-cost")).toHaveTextContent(/Last turn est\. \$0\.0004/);
+      expect(screen.getByTestId("voice-session-cost")).toHaveTextContent("$0.0004");
+      expect(screen.getByTestId("voice-turn-cost-line")).toHaveTextContent("$0.0004");
     });
   });
 
