@@ -85,45 +85,55 @@ export function useVoiceAgent() {
   const start = useCallback(async () => {
     stopPlayback();
     disposeRecorder();
-    turnsRef.current = [];
-    callIdRef.current = null;
-    conversationIdRef.current = null;
-    sessionIdRef.current = newSessionId();
+
+    // KAN-17: after a turn/backend or mic error, Resume keeps the same callId + turns.
+    const recovering = Boolean(callIdRef.current);
+    if (!recovering) {
+      turnsRef.current = [];
+      conversationIdRef.current = null;
+      sessionIdRef.current = newSessionId();
+    }
     activeRef.current = true;
 
     setStatus({
       phase: "processing",
-      message: "Starting session…",
+      message: recovering ? "Resuming listening…" : "Starting session…",
       level: 0,
-      callId: null,
-      conversationId: null,
+      callId: callIdRef.current,
+      conversationId: conversationIdRef.current,
       sessionId: sessionIdRef.current,
-      turns: [],
+      turns: turnsRef.current,
       errorCode: null,
     });
 
     try {
-      const snapshot = await startSession({ callerNumber: "browser", language: "en" });
-      if (!activeRef.current) {
-        return;
-      }
-      callIdRef.current = snapshot.callId;
-      conversationIdRef.current = snapshot.conversationId;
-
+      // Mic first so permission deny never opens an orphaned backend session.
       await beginListening();
       if (!activeRef.current) {
         disposeRecorder();
         return;
       }
 
+      if (!recovering) {
+        const snapshot = await startSession({ callerNumber: "browser", language: "en" });
+        if (!activeRef.current) {
+          disposeRecorder();
+          return;
+        }
+        callIdRef.current = snapshot.callId;
+        conversationIdRef.current = snapshot.conversationId;
+      }
+
       setStatus({
         phase: "listening",
-        message: "Listening — speak, then press Send turn.",
+        message: recovering
+          ? "Listening again — speak, then press Send turn."
+          : "Listening — speak, then press Send turn.",
         level: 0,
-        callId: snapshot.callId,
-        conversationId: snapshot.conversationId,
+        callId: callIdRef.current,
+        conversationId: conversationIdRef.current,
         sessionId: sessionIdRef.current,
-        turns: [],
+        turns: turnsRef.current,
         errorCode: null,
       });
     } catch (error) {
@@ -134,10 +144,10 @@ export function useVoiceAgent() {
         phase: "error",
         message,
         level: 0,
-        callId: null,
-        conversationId: null,
+        callId: callIdRef.current,
+        conversationId: conversationIdRef.current,
         sessionId: sessionIdRef.current,
-        turns: [],
+        turns: turnsRef.current,
         errorCode: code,
       });
     }

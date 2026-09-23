@@ -2,13 +2,13 @@
 
 End-to-end flows as seen from the **frontend dashboard** repository.
 
-> STT/TTS, LLM, tools, and PostgreSQL run in the companion **backend** repo (`voice-agent`). Browser microphone capture (KAN-10) and voice-turn UI (KAN-16) run in this frontend. This document describes what the UI does today and how it attaches to backend flows.
+> STT/TTS, LLM, tools, and PostgreSQL run in the companion **backend** repo (`voice-agent`). Browser microphone capture (KAN-10) and Sprint 2 voice-turn E2E (KAN-17, built on KAN-16 wiring) run in this frontend. This document describes what the UI does today and how it attaches to backend flows.
 
 ## Primary flow (dashboard ↔ backend)
 
 ```
 Developer / operator opens UI
-  http://localhost:5173 (Vite) or nginx:80
+  http://localhost:5174 (Vite) or nginx:80
       │
       ▼
 React app boots
@@ -18,7 +18,7 @@ React app boots
 DashboardLayout + Sidebar navigation
       │
       ├── /          Live call monitor (KAN-19 demo) + System Status
-      ├── /calls     Voice agent (KAN-16) + mic diagnostics (KAN-10) + voice states
+      ├── /calls     Voice agent E2E (KAN-17) + mic diagnostics (KAN-10) + voice states
       ├── /history   Call history table (KAN-19 demo)
       └── /settings  Shows resolved VITE_API_BASE_URL
       │
@@ -31,25 +31,23 @@ Dashboard System Status panel
       └── loading                 → Checking…
 ```
 
-## Browser voice agent (KAN-16)
+## Browser voice agent (KAN-17 Sprint 2 E2E)
 
 ```
 Operator opens /calls → Voice agent → Start
       │
       ▼
-POST /api/sessions → callId
+Mic permission (MediaRecorder clip) then POST /api/sessions → callId
       │
-      ▼
-MediaRecorder clip capture (mic permission)
-      │
-      ├── Send turn → base64 → POST /api/voice/turn
+      ├── Send turn → base64 → POST /api/voice/turn (same callId each turn)
       │                 ├── show transcript + replyText
       │                 ├── play audioBase64 (or ttsError notice)
       │                 └── resume listening
+      ├── Error → Resume (same callId) or Stop → idle
       └── Stop → idle; POST /api/sessions/:callId/complete
 ```
 
-No WebSocket in Sprint 2. Details: [`docs/architecture/VOICE_PIPELINE.md`](docs/architecture/VOICE_PIPELINE.md).
+No WebSocket and no telephony in Sprint 2. Manual smoke: [`docs/testing/E2E_SPRINT2_KAN17.md`](docs/testing/E2E_SPRINT2_KAN17.md). Details: [`docs/architecture/VOICE_PIPELINE.md`](docs/architecture/VOICE_PIPELINE.md).
 
 ## Browser microphone capture (KAN-10)
 

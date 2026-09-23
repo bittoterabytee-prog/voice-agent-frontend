@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { CallsPage } from "@/pages/CallsPage";
+import { AudioCaptureError } from "@/services/audioCapture";
 import type { RecordedClip } from "@/services/clipRecorder";
 import type { SessionSnapshot, VoiceTurnResponse } from "@/types";
 
@@ -72,7 +73,7 @@ function renderCallsPage() {
   );
 }
 
-describe("VoiceAgentPanel (KAN-16)", () => {
+describe("VoiceAgentPanel (KAN-16 / KAN-17)", () => {
   beforeEach(() => {
     startRecorder.mockReset();
     stopAndCollect.mockReset();
@@ -103,6 +104,7 @@ describe("VoiceAgentPanel (KAN-16)", () => {
 
     expect(screen.getByTestId("voice-agent")).toBeInTheDocument();
     expect(screen.getByTestId("voice-start")).toBeEnabled();
+    expect(screen.getByTestId("voice-start")).toHaveTextContent("Start");
     expect(screen.getByTestId("voice-send-turn")).toBeDisabled();
     expect(screen.getByTestId("voice-stop")).toBeDisabled();
 
@@ -227,6 +229,7 @@ describe("VoiceAgentPanel (KAN-16)", () => {
         "EXTERNAL_SERVICE_UNAVAILABLE",
       );
       expect(screen.getByTestId("voice-stop")).toBeEnabled();
+      expect(screen.getByTestId("voice-start")).toHaveTextContent("Resume");
     });
   });
 
@@ -244,7 +247,102 @@ describe("VoiceAgentPanel (KAN-16)", () => {
       expect(screen.getByTestId("voice-agent").querySelector('[data-voice-state="idle"]')).not.toBeNull();
       expect(screen.getByTestId("voice-agent-message")).toHaveTextContent("Session stopped");
       expect(screen.getByTestId("voice-start")).toBeEnabled();
+      expect(screen.getByTestId("voice-start")).toHaveTextContent("Start");
       expect(screen.getByTestId("voice-stop")).toBeDisabled();
+    });
+  });
+
+  it("TC-007 multi-turn keeps the same callId for context", async () => {
+    postVoiceTurnMock
+      .mockResolvedValueOnce({
+        transcript: "Book me tomorrow",
+        replyText: "What time works?",
+        conversationId: "conv-1",
+        callId: "call-1",
+        audioBase64: "BQQD",
+        mimeType: "audio/mpeg",
+      } satisfies VoiceTurnResponse)
+      .mockResolvedValueOnce({
+        transcript: "Ten AM",
+        replyText: "I will check availability.",
+        conversationId: "conv-1",
+        callId: "call-1",
+        audioBase64: "BQQE",
+        mimeType: "audio/mpeg",
+      } satisfies VoiceTurnResponse);
+
+    const user = userEvent.setup();
+    renderCallsPage();
+    await user.click(screen.getByTestId("voice-start"));
+    await waitFor(() => expect(screen.getByTestId("voice-send-turn")).toBeEnabled());
+
+    await user.click(screen.getByTestId("voice-send-turn"));
+    await waitFor(() => {
+      expect(screen.getAllByTestId("voice-turn")).toHaveLength(1);
+      expect(screen.getByTestId("voice-send-turn")).toBeEnabled();
+    });
+
+    await user.click(screen.getByTestId("voice-send-turn"));
+    await waitFor(() => {
+      expect(screen.getAllByTestId("voice-turn")).toHaveLength(2);
+      expect(postVoiceTurnMock).toHaveBeenCalledTimes(2);
+      expect(postVoiceTurnMock.mock.calls[0]?.[0]).toEqual(
+        expect.objectContaining({ callId: "call-1" }),
+      );
+      expect(postVoiceTurnMock.mock.calls[1]?.[0]).toEqual(
+        expect.objectContaining({ callId: "call-1" }),
+      );
+      expect(startSessionMock).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("TC-008 mic deny on Start shows recoverable error chrome", async () => {
+    startRecorder.mockRejectedValue(
+      new AudioCaptureError("permission_denied", "Microphone permission was denied."),
+    );
+
+    const user = userEvent.setup();
+    renderCallsPage();
+    await user.click(screen.getByTestId("voice-start"));
+
+    await waitFor(() => {
+      expect(startSessionMock).not.toHaveBeenCalled();
+      expect(screen.getByTestId("voice-agent").querySelector('[data-voice-state="error"]')).not.toBeNull();
+      expect(screen.getByTestId("voice-agent-message")).toHaveTextContent(
+        "Microphone permission was denied.",
+      );
+      expect(screen.getByTestId("voice-error-code")).toHaveTextContent("permission_denied");
+      expect(screen.getByTestId("voice-start")).toBeEnabled();
+      expect(screen.getByTestId("voice-start")).toHaveTextContent("Start");
+    });
+  });
+
+  it("TC-009 Resume after turn error keeps callId and does not open a new session", async () => {
+    const { ApiError } = await import("@/services/apiClient");
+    postVoiceTurnMock.mockRejectedValue(
+      new ApiError("Speech service is unavailable.", 502, "EXTERNAL_SERVICE_UNAVAILABLE"),
+    );
+
+    const user = userEvent.setup();
+    renderCallsPage();
+    await user.click(screen.getByTestId("voice-start"));
+    await waitFor(() => expect(screen.getByTestId("voice-send-turn")).toBeEnabled());
+    await user.click(screen.getByTestId("voice-send-turn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("voice-start")).toHaveTextContent("Resume");
+    });
+
+    startSessionMock.mockClear();
+    startRecorder.mockClear();
+    await user.click(screen.getByTestId("voice-start"));
+
+    await waitFor(() => {
+      expect(startSessionMock).not.toHaveBeenCalled();
+      expect(startRecorder).toHaveBeenCalled();
+      expect(screen.getByTestId("voice-call-id")).toHaveTextContent("call-1");
+      expect(screen.getByTestId("voice-agent").querySelector('[data-voice-state="listening"]')).not.toBeNull();
+      expect(screen.getByTestId("voice-send-turn")).toBeEnabled();
     });
   });
 });

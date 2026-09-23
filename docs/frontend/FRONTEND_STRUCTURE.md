@@ -1,6 +1,6 @@
 # Frontend Structure
 
-Folder map and responsibilities for `voice-agent-frontend` ([KAN-6](https://voiceagentai.atlassian.net/browse/KAN-6), [KAN-9](https://voiceagentai.atlassian.net/browse/KAN-9), [KAN-10](https://voiceagentai.atlassian.net/browse/KAN-10), [KAN-16](https://voiceagentai.atlassian.net/browse/KAN-16), [KAN-19](https://voiceagentai.atlassian.net/browse/KAN-19)).
+Folder map and responsibilities for `voice-agent-frontend` ([KAN-6](https://voiceagentai.atlassian.net/browse/KAN-6), [KAN-9](https://voiceagentai.atlassian.net/browse/KAN-9), [KAN-10](https://voiceagentai.atlassian.net/browse/KAN-10), [KAN-16](https://voiceagentai.atlassian.net/browse/KAN-16), [KAN-17](https://voiceagentai.atlassian.net/browse/KAN-17), [KAN-19](https://voiceagentai.atlassian.net/browse/KAN-19)).
 
 ## Tree
 
@@ -30,7 +30,7 @@ docs/                    Project knowledge (KAN-9+)
 | Path | Page | Role today |
 | ---- | ---- | ---------- |
 | `/` | `DashboardPage` | Live call monitor (SRD §33 demo) + voice legend + System Status |
-| `/calls` | `CallsPage` | Voice agent (KAN-16) + mic diagnostics (KAN-10) + voice state reference |
+| `/calls` | `CallsPage` | Voice agent E2E (KAN-17) + mic diagnostics (KAN-10) + voice state reference |
 | `/history` | `CallHistoryPage` | Recent appointment-agent sessions (demo table) |
 | `/settings` | `SettingsPage` | Shows resolved `VITE_API_BASE_URL` |
 | `*` | redirect | → `/` |
@@ -54,7 +54,7 @@ See [`docs/backend/API_DOCUMENTATION.md`](../backend/API_DOCUMENTATION.md).
 
 | API | Helper |
 | --- | ------ |
-| `MediaRecorder` → base64 clips | `createClipRecorderSession()` in `clipRecorder.ts` (KAN-16) |
+| `MediaRecorder` → base64 clips | `createClipRecorderSession()` in `clipRecorder.ts` (KAN-16 / KAN-17) |
 | `navigator.mediaDevices.getUserMedia` + ScriptProcessor | `createAudioCaptureSession()` in `audioCapture.ts` (KAN-10 PCM) |
 | `Audio` element playback | `playAudioBase64()` in `audioPlayback.ts` |
 
@@ -88,7 +88,7 @@ See [`docs/voice/AUDIO_CAPTURE.md`](../voice/AUDIO_CAPTURE.md) and [`docs/archit
 
 | Command | Purpose |
 | ------- | ------- |
-| `npm run dev` | Vite on port 5173 |
+| `npm run dev` | Vite on port 5174 |
 | `npm run build` | `tsc -b` + production bundle |
 | `npm test` | Vitest |
 | `npm run lint` / `format` | ESLint / Prettier |

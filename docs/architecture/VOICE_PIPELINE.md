@@ -2,19 +2,21 @@
 
 STT / LLM / TTS run in the **backend** (`voice-agent`). This frontend captures mic audio and calls the orchestrated turn API.
 
-## Preferred Sprint 2 path (KAN-16)
+## Preferred Sprint 2 path (KAN-17)
 
 ```
 Microphone (MediaRecorder clip)
    → base64 audio
-   → POST /api/sessions (optional durable callId)
+   → POST /api/sessions (durable callId; mic granted first)
    → POST /api/voice/turn { audioBase64, mimeType, callId?, sessionId? }
    → show transcript + replyText
    → play audioBase64 (or text-only when ttsError)
+   → multi-turn reuses the same callId
+   → error → Resume (same callId) or Stop
    → Stop → idle + POST /api/sessions/:callId/complete
 ```
 
-WebSocket streaming is **not** required for Sprint 2.
+WebSocket streaming and telephony are **not** required for Sprint 2. E2E smoke: [`docs/testing/E2E_SPRINT2_KAN17.md`](../testing/E2E_SPRINT2_KAN17.md).
 
 ## Where it lives in this repo
 

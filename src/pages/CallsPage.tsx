@@ -9,14 +9,14 @@ export function CallsPage() {
       <div className="page__intro">
         <h2>Calls</h2>
         <p>
-          Run a browser voice session against the backend turn API (mic →{" "}
-          <code>POST /api/voice/turn</code> → play reply), or use the low-level capture panel for
-          PCM diagnostics.
+          Sprint 2 E2E demo (KAN-17): mic → session → <code>POST /api/voice/turn</code> → transcript
+          + TTS → multi-turn → stop. Browser only — no telephony. Use the capture panel for PCM
+          diagnostics.
         </p>
       </div>
 
       <div className="calls-layout">
-        <Panel title="Voice agent" chip="KAN-16">
+        <Panel title="Voice agent" chip="KAN-17">
           <VoiceAgentPanel />
         </Panel>
         <Panel title="Voice interaction states">
