@@ -19,7 +19,7 @@
 | Network errors | `tests/apiClient.test.ts` | `ApiError` wrapping |
 | Mic capture session | `tests/audioCapture.test.ts` | KAN-10 TC-001–004 (permission, chunks, stop, no device) |
 | Mic capture UI | `tests/MicrophoneCapturePanel.test.tsx` | Start/Stop, errors, chunk/level display |
-| Voice agent UI | `tests/VoiceAgentPanel.test.tsx` | KAN-16 TC-001–006 (listen, transcript, TTS, soft/hard errors, stop) |
+| Voice agent UI | `tests/VoiceAgentPanel.test.tsx` | KAN-16/17 TC-001–009 (listen, transcript, TTS, soft/hard errors, stop, multi-turn, mic deny, Resume) |
 | Audio playback | `tests/audioPlayback.test.ts` | base64 → blob + play cleanup |
 | API POST / errors | `tests/apiClient.test.ts` | `apiPost`, backend error envelope |
 
@@ -34,9 +34,10 @@
 
 ## Manual checks
 
-- `npm run dev` loads without compile errors.
+- `npm run dev` loads on [http://localhost:5174](http://localhost:5174) without compile errors.
 - With backend down, System Status shows Unavailable.
 - With backend up on `VITE_API_BASE_URL`, status shows Healthy.
 - Resize viewport: sidebar collapses behind Menu on narrow screens.
-- On `/calls`, Voice agent Start opens a session and listens; Send turn posts audio; Stop releases the mic.
+- On `/calls`, Voice agent Start opens a session and listens; Send turn posts audio; second turn keeps `callId`; Stop releases the mic.
+- Sprint 2 smoke checklist: [`E2E_SPRINT2_KAN17.md`](E2E_SPRINT2_KAN17.md).
 - On `/calls`, Microphone Capture Start/Stop still exercises low-level PCM diagnostics.

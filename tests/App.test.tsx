@@ -47,7 +47,7 @@ describe("dashboard foundation", () => {
     expect(screen.getAllByText("Idle / waiting").length).toBeGreaterThan(0);
   });
 
-  it("KAN-16 voice agent panel is available on Calls", async () => {
+  it("KAN-17 voice agent panel is available on Calls", async () => {
     const user = userEvent.setup();
     render(<App />);
 

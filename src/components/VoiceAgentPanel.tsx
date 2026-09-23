@@ -9,6 +9,8 @@ export function VoiceAgentPanel() {
   const isError = phase === "error";
   const canSend = phase === "listening";
   const canStop = !isIdle;
+  const canResume = isError && Boolean(status.callId);
+  const startLabel = canResume ? "Resume" : "Start";
   const levelPercent = Math.round(status.level * 100);
 
   return (
@@ -23,7 +25,7 @@ export function VoiceAgentPanel() {
             onClick={() => void start()}
             disabled={!isIdle && !isError}
           >
-            Start
+            {startLabel}
           </button>
           <button
             type="button"

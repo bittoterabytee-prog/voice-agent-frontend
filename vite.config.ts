@@ -10,7 +10,9 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
+    // Sprint 2 E2E (KAN-17): keep 5174 so CORS allowlists match the runbook.
+    port: 5174,
+    strictPort: true,
   },
   test: {
     globals: true,
