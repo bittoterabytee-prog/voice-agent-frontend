@@ -85,7 +85,7 @@ Companion backend repository: `voice-agent` (Express API). This repo contains **
 | --- | ---- |
 | End-to-end flow | [`SYSTEM_FLOW.md`](SYSTEM_FLOW.md) |
 | Project rules | [`PROJECT_RULES.md`](PROJECT_RULES.md) |
-| MCP setup | [`docs/mcp/MCP_SETUP.md`](docs/mcp/MCP_SETUP.md) |
+| Shared MCP + FE/BE knowledge | https://github.com/bittoterabytee-prog/voice-agent-knowledge |
 | Mic / STT handoff | [`docs/voice/AUDIO_CAPTURE.md`](docs/voice/AUDIO_CAPTURE.md) |
 | Frontend structure | [`docs/frontend/FRONTEND_STRUCTURE.md`](docs/frontend/FRONTEND_STRUCTURE.md) |
 | UI/UX design (KAN-19) | [`docs/frontend/UI_UX_DESIGN.md`](docs/frontend/UI_UX_DESIGN.md) |
