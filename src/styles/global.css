@@ -506,6 +506,50 @@ code {
   font-size: 0.88rem;
 }
 
+.voice-agent__pipeline {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border, #e2e6ee);
+}
+
+.voice-agent__pipeline-request {
+  margin: 0.35rem 0 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  color: var(--muted, #5b6472);
+}
+
+.voice-agent__pipeline-stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.voice-agent__pipeline-stage {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 6px;
+  background: var(--brand-soft, #eef3ff);
+  color: var(--text, #1b2430);
+}
+
+.voice-agent__pipeline-stage--fail {
+  background: #fdecec;
+  color: #8a1f1f;
+}
+
+.recent-calls__table tbody tr[role="button"] {
+  cursor: pointer;
+}
+
+.recent-calls__table tbody tr[role="button"]:hover,
+.recent-calls__row--active {
+  background: var(--brand-soft, #eef3ff);
+}
+
 .panel-chip {
   display: inline-flex;
   align-items: center;

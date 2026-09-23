@@ -1,6 +1,13 @@
 import { VoiceStateIndicator } from "@/components/VoiceStateIndicator";
 import { useVoiceAgent } from "@/hooks/useVoiceAgent";
-import type { VoiceUiState } from "@/types";
+import type { PipelineStageSummary, VoiceUiState } from "@/types";
+import { formatUsd } from "@/utils/formatUsd";
+
+function formatStage(stage: PipelineStageSummary): string {
+  const soft = stage.softFail ? " (soft-fail)" : "";
+  const code = stage.code ? ` · ${stage.code}` : "";
+  return `${stage.stage.toUpperCase()} · ${stage.outcome}${soft} · ${stage.durationMs}ms${code}`;
+}
 
 export function VoiceAgentPanel() {
   const { status, start, sendTurn, stop } = useVoiceAgent();
@@ -10,6 +17,8 @@ export function VoiceAgentPanel() {
   const canSend = phase === "listening";
   const canStop = !isIdle;
   const levelPercent = Math.round(status.level * 100);
+  const pipeline = status.lastPipeline;
+  const lastCost = status.lastCost;
 
   return (
     <div className="voice-agent" data-testid="voice-agent">
@@ -80,6 +89,10 @@ export function VoiceAgentPanel() {
           <dt>Conversation ID</dt>
           <dd data-testid="voice-conversation-id">{status.conversationId ?? "—"}</dd>
         </div>
+        <div>
+          <dt>Est. cost (call)</dt>
+          <dd data-testid="voice-session-cost">{formatUsd(status.sessionEstimatedUsd)}</dd>
+        </div>
         {status.errorCode ? (
           <div>
             <dt>Error code</dt>
@@ -87,6 +100,46 @@ export function VoiceAgentPanel() {
           </div>
         ) : null}
       </dl>
+
+      <div className="voice-agent__pipeline" data-testid="voice-pipeline-logs">
+        <h3 className="voice-agent__transcript-title">Pipeline logs</h3>
+        {!pipeline || pipeline.stages.length === 0 ? (
+          <p className="voice-agent__empty" data-testid="voice-pipeline-empty">
+            Stage timings appear here after each successful voice turn.
+          </p>
+        ) : (
+          <>
+            <p className="voice-agent__pipeline-request" data-testid="voice-pipeline-request-id">
+              requestId: {pipeline.requestId}
+            </p>
+            {lastCost ? (
+              <p className="voice-agent__pipeline-request" data-testid="voice-turn-cost">
+                Last turn est. {formatUsd(lastCost.estimatedUsd)}
+                {lastCost.breakdown.length > 0
+                  ? ` (${lastCost.breakdown
+                      .map((b) => `${b.stage.toUpperCase()} ${formatUsd(b.estimatedUsd)}`)
+                      .join(" · ")})`
+                  : ""}
+              </p>
+            ) : null}
+            <ul className="voice-agent__pipeline-stages">
+              {pipeline.stages.map((stage) => (
+                <li
+                  key={`${pipeline.requestId}-${stage.stage}-${stage.outcome}-${stage.durationMs}`}
+                  className={
+                    stage.outcome === "failure"
+                      ? "voice-agent__pipeline-stage voice-agent__pipeline-stage--fail"
+                      : "voice-agent__pipeline-stage"
+                  }
+                  data-testid="voice-pipeline-stage"
+                >
+                  {formatStage(stage)}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
 
       <div className="voice-agent__transcript" data-testid="voice-transcript">
         <h3 className="voice-agent__transcript-title">Conversation</h3>
@@ -106,6 +159,11 @@ export function VoiceAgentPanel() {
                   <span className="voice-agent__role">Agent</span>{" "}
                   <span data-testid="voice-turn-reply">{turn.replyText}</span>
                 </p>
+                {turn.cost ? (
+                  <p className="voice-agent__notice" data-testid="voice-turn-cost-line">
+                    Est. {formatUsd(turn.cost.estimatedUsd)}
+                  </p>
+                ) : null}
                 {turn.ttsNotice ? (
                   <p className="voice-agent__notice" data-testid="voice-tts-notice">
                     {turn.ttsNotice}

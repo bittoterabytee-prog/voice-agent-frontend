@@ -10,11 +10,14 @@ Microphone (MediaRecorder clip)
    → POST /api/sessions (optional durable callId)
    → POST /api/voice/turn { audioBase64, mimeType, callId?, sessionId? }
    → show transcript + replyText
+   → show Pipeline logs from response.pipeline (KAN-18: requestId + stage timings)
+   → show per-turn / per-call estimated OpenAI cost from response.cost
+   → Settings “POC spend so far” via GET /api/usage/summary (not live wallet balance)
    → play audioBase64 (or text-only when ttsError)
    → Stop → idle + POST /api/sessions/:callId/complete
 ```
 
-WebSocket streaming is **not** required for Sprint 2.
+WebSocket streaming is **not** required for Sprint 2. The UI does **not** tail server stdout; it renders the structured `pipeline` field returned by each successful (or TTS soft-fail) turn.
 
 ## Where it lives in this repo
 
