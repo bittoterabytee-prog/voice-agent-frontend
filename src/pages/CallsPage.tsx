@@ -1,5 +1,6 @@
 import { MicrophoneCapturePanel } from "@/components/MicrophoneCapturePanel";
 import { Panel } from "@/components/Panel";
+import { VoiceAgentPanel } from "@/components/VoiceAgentPanel";
 import { VoiceStateLegend } from "@/components/VoiceStateLegend";
 
 export function CallsPage() {
@@ -8,17 +9,21 @@ export function CallsPage() {
       <div className="page__intro">
         <h2>Calls</h2>
         <p>
-          Capture browser audio for the POC, and preview the voice interaction chrome operators see
-          during a live session (idle, listening, speaking, error).
+          Run a browser voice session against the backend turn API (mic →{" "}
+          <code>POST /api/voice/turn</code> → play reply), or use the low-level capture panel for
+          PCM diagnostics.
         </p>
       </div>
 
       <div className="calls-layout">
-        <Panel title="Microphone Capture">
-          <MicrophoneCapturePanel />
+        <Panel title="Voice agent" chip="KAN-16">
+          <VoiceAgentPanel />
         </Panel>
         <Panel title="Voice interaction states">
           <VoiceStateLegend />
+        </Panel>
+        <Panel title="Microphone Capture" chip="KAN-10">
+          <MicrophoneCapturePanel />
         </Panel>
       </div>
     </div>

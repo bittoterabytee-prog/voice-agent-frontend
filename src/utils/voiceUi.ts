@@ -13,11 +13,12 @@ export function conversationStateToVoiceUi(state: ConversationState): VoiceUiSta
       return "listening";
     case "ERROR_RECOVERY":
       return "error";
+    case "CHECKING_AVAILABILITY":
+    case "TOOL_EXECUTION":
+      return "processing";
     case "USER_REQUESTED_WAIT":
     case "WAITING_FOR_USER":
     case "BACKGROUND_SPEECH":
-    case "CHECKING_AVAILABILITY":
-    case "TOOL_EXECUTION":
     case "HUMAN_HANDOFF":
     case "CALL_ENDING":
     case "IDLE":
@@ -38,6 +39,10 @@ export const VOICE_UI_STATE_COPY: Record<VoiceUiState, { title: string; descript
   listening: {
     title: "Listening",
     description: "Capturing caller speech or awaiting the next utterance.",
+  },
+  processing: {
+    title: "Processing",
+    description: "Sending audio to the backend turn pipeline (STT → LLM → TTS).",
   },
   speaking: {
     title: "Speaking",

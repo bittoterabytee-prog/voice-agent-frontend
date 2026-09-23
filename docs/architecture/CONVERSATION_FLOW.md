@@ -6,8 +6,8 @@ Conversation turns and the wait/handoff state machine live in the **backend**.
 
 | Today | Later |
 | ----- | ----- |
-| No conversation UI | Display transcripts, state badges, tool activity from APIs |
-| Placeholders on Calls / History | Bind to backend conversation + call event payloads |
+| Voice agent UI sends turns via HTTP and displays transcript / reply from the backend | Live monitor binds to call event streams |
+| Optional durable `callId` via `POST /api/sessions` | Richer wait/handoff chrome from session state |
 
 ## Rules for UI work
 

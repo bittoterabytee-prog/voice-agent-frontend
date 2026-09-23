@@ -7,15 +7,43 @@ export function getApiBaseUrl(): string {
 
 export class ApiError extends Error {
   readonly status?: number;
+  readonly code?: string;
 
-  constructor(message: string, status?: number) {
+  constructor(message: string, status?: number, code?: string) {
     super(message);
     this.name = "ApiError";
     this.status = status;
+    this.code = code;
   }
 }
 
-export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
+type ErrorBody = {
+  error?: {
+    code?: unknown;
+    message?: unknown;
+  };
+};
+
+async function parseError(response: Response): Promise<ApiError> {
+  let code: string | undefined;
+  let message = `Backend request failed with status ${response.status}.`;
+
+  try {
+    const body = (await response.json()) as ErrorBody;
+    if (typeof body.error?.code === "string" && body.error.code.trim()) {
+      code = body.error.code.trim();
+    }
+    if (typeof body.error?.message === "string" && body.error.message.trim()) {
+      message = body.error.message.trim();
+    }
+  } catch {
+    // Non-JSON error bodies still map to a safe status message.
+  }
+
+  return new ApiError(message, response.status, code);
+}
+
+async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${getApiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 
   let response: Response;
@@ -32,8 +60,28 @@ export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   if (!response.ok) {
-    throw new ApiError(`Backend request failed with status ${response.status}.`, response.status);
+    throw await parseError(response);
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
   }
 
   return (await response.json()) as T;
+}
+
+export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
+  return requestJson<T>(path, init);
+}
+
+export async function apiPost<T>(path: string, body?: unknown, init?: RequestInit): Promise<T> {
+  return requestJson<T>(path, {
+    ...init,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(init?.headers ?? {}),
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
 }

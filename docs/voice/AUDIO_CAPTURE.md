@@ -67,6 +67,12 @@ UI summary fields (`MicrophoneChunkSummary`) omit the raw `samples` buffer and k
 | `unsupported` | Missing `getUserMedia` / AudioContext |
 | `unknown` | Other failures |
 
+## Voice turn clips (KAN-16)
+
+The voice agent UI records **MediaRecorder** clips (typically `audio/webm`) and base64-encodes them for `POST /api/voice/turn`. See `src/services/clipRecorder.ts` and [`docs/architecture/VOICE_PIPELINE.md`](../architecture/VOICE_PIPELINE.md).
+
+PCM chunks from KAN-10 remain available for diagnostics and future streaming clients; they are not the Sprint 2 turn payload.
+
 ## Test cases (KAN-10)
 
 | ID | Expectation |

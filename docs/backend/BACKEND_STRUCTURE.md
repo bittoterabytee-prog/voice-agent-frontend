@@ -8,7 +8,9 @@ This frontend talks to the companion **`voice-agent`** Express backend. Backend 
 | ---- | ----- |
 | Base URL env | `VITE_API_BASE_URL` (default `http://localhost:3000`) |
 | Health | `GET /health` → `{ "status": "ok" }` |
-| Client | `src/services/apiClient.ts` |
+| Sessions | `POST /api/sessions`, `POST /api/sessions/:callId/complete` |
+| Voice turn | `POST /api/voice/turn` |
+| Client | `src/services/apiClient.ts` (`apiGet` / `apiPost`) |
 
 ## Expected backend layout (companion)
 
