@@ -40,3 +40,9 @@
 - Resize viewport: sidebar collapses behind Menu on narrow screens.
 - On `/calls`, Voice agent Start opens a session and listens; Send turn posts audio; Stop releases the mic.
 - On `/calls`, Microphone Capture Start/Stop still exercises low-level PCM diagnostics.
+
+## Multilingual scenarios (KAN-32)
+
+- Catalog: [`MULTILINGUAL_SCENARIO_CATALOG.md`](MULTILINGUAL_SCENARIO_CATALOG.md)
+- Manual E2E: [`E2E_MULTILINGUAL_KAN31.md`](E2E_MULTILINGUAL_KAN31.md)
+
