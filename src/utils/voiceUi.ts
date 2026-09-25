@@ -31,6 +31,21 @@ export function formatConversationState(state: ConversationState): string {
   return state.replaceAll("_", " ");
 }
 
+/** Display label for session language codes (KAN-29). */
+export function formatSessionLanguage(code: string | null | undefined): string {
+  const normalized = code?.trim().toLowerCase();
+  switch (normalized) {
+    case "en":
+      return "English (en)";
+    case "hi":
+      return "Hindi (hi)";
+    case "hinglish":
+      return "Hinglish";
+    default:
+      return code?.trim() ? code.trim() : "—";
+  }
+}
+
 export const VOICE_UI_STATE_COPY: Record<VoiceUiState, { title: string; description: string }> = {
   idle: {
     title: "Idle / waiting",

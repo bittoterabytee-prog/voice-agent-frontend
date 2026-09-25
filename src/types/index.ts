@@ -73,7 +73,7 @@ export type VoiceTurnTtsError = {
 };
 
 export type PipelineStageSummary = {
-  stage: "stt" | "llm" | "tts" | "session" | "turn";
+  stage: "stt" | "language" | "llm" | "tts" | "session" | "turn";
   outcome: "success" | "failure";
   durationMs: number;
   softFail?: boolean;
@@ -85,6 +85,13 @@ export type PipelineTrace = {
   stages: PipelineStageSummary[];
 };
 
+export type LanguageDetectionResult = {
+  language: "en" | "hi" | "hinglish" | null;
+  confidence: number;
+  unclear: boolean;
+  unsupported: boolean;
+};
+
 export type VoiceTurnRequest = {
   audioBase64: string;
   mimeType?: string;
@@ -93,6 +100,8 @@ export type VoiceTurnRequest = {
   conversationId?: string;
   callId?: string;
   voice?: string;
+  /** Optional STT / detection hint (en | hi | hinglish). */
+  languageHint?: string;
 };
 
 export type VoiceTurnResponse = {
@@ -109,6 +118,11 @@ export type VoiceTurnResponse = {
   ttsError?: VoiceTurnTtsError;
   pipeline?: PipelineTrace;
   cost?: TurnCostEstimate;
+  /** Durable session language preference (KAN-28 / KAN-29). */
+  language?: string;
+  /** True when this turn changed session language (KAN-27 / KAN-29). */
+  languageChanged?: boolean;
+  languageDetection?: LanguageDetectionResult;
 };
 
 export type StageUsageEstimate = {
@@ -183,6 +197,10 @@ export type VoiceAgentStatus = {
   callId: string | null;
   conversationId: string | null;
   sessionId: string | null;
+  /** Active session language from API (en | hi | hinglish) — KAN-29. */
+  language: string | null;
+  /** Brief notice when languageChanged or unclear/unsupported (KAN-29). */
+  languageNotice: string | null;
   turns: VoiceConversationTurn[];
   lastPipeline: PipelineTrace | null;
   lastCost: TurnCostEstimate | null;

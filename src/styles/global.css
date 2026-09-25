@@ -506,6 +506,15 @@ code {
   font-size: 0.88rem;
 }
 
+.voice-agent__language-notice {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--brand-strong, #0f766e);
+  background: rgba(15, 118, 110, 0.08);
+  color: var(--ink, #1a1f26);
+  font-size: 0.92rem;
+}
+
 .voice-agent__pipeline {
   margin-top: 1rem;
   padding-top: 0.75rem;

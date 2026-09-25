@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { conversationStateToVoiceUi, formatConversationState } from "@/utils/voiceUi";
+import {
+  conversationStateToVoiceUi,
+  formatConversationState,
+  formatSessionLanguage,
+} from "@/utils/voiceUi";
 
 describe("voiceUi helpers (KAN-19)", () => {
   it("maps speaking / listening / processing / error / idle conversation states", () => {
@@ -12,5 +16,14 @@ describe("voiceUi helpers (KAN-19)", () => {
 
   it("formats conversation state labels for the monitor", () => {
     expect(formatConversationState("WAITING_FOR_USER")).toBe("WAITING FOR USER");
+  });
+});
+
+describe("formatSessionLanguage (KAN-29)", () => {
+  it("labels en / hi / hinglish for the voice UI indicator", () => {
+    expect(formatSessionLanguage("en")).toBe("English (en)");
+    expect(formatSessionLanguage("hi")).toBe("Hindi (hi)");
+    expect(formatSessionLanguage("hinglish")).toBe("Hinglish");
+    expect(formatSessionLanguage(null)).toBe("—");
   });
 });

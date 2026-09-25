@@ -66,6 +66,10 @@ Implemented in `LiveCallMonitor` + `CallActivityTimeline`:
 
 Demo payload: `src/data/demoCallMonitor.ts` (matches the SRD wait → background speech → caller return example).
 
+### Live voice panel language (KAN-29)
+
+On `/calls`, the interactive voice chrome shows session language from the API (`English (en)` / `Hindi (hi)` / `Hinglish`), updates after mid-call switches, and surfaces a brief switch notice — not a separate language picker.
+
 ## Out of scope for this design ticket
 
 - Wiring to real telephony / WebSocket call feeds

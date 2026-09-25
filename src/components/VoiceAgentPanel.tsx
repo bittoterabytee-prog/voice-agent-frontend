@@ -2,6 +2,7 @@ import { VoiceStateIndicator } from "@/components/VoiceStateIndicator";
 import { useVoiceAgent } from "@/hooks/useVoiceAgent";
 import type { PipelineStageSummary, VoiceUiState } from "@/types";
 import { formatUsd } from "@/utils/formatUsd";
+import { formatSessionLanguage } from "@/utils/voiceUi";
 
 function formatStage(stage: PipelineStageSummary): string {
   const soft = stage.softFail ? " (soft-fail)" : "";
@@ -59,6 +60,12 @@ export function VoiceAgentPanel() {
         {status.message}
       </p>
 
+      {status.languageNotice ? (
+        <p className="voice-agent__language-notice" data-testid="voice-language-notice">
+          {status.languageNotice}
+        </p>
+      ) : null}
+
       <div className="voice-agent__meter" data-testid="voice-level-meter">
         <div className="voice-agent__meter-label">
           <span>Input level</span>
@@ -81,6 +88,10 @@ export function VoiceAgentPanel() {
       </div>
 
       <dl className="voice-agent__meta">
+        <div>
+          <dt>Language</dt>
+          <dd data-testid="voice-language">{formatSessionLanguage(status.language)}</dd>
+        </div>
         <div>
           <dt>Call ID</dt>
           <dd data-testid="voice-call-id">{status.callId ?? "—"}</dd>

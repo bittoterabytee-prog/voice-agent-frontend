@@ -8,7 +8,8 @@ import {
 } from "@/services/clipRecorder";
 import { completeSession, startSession } from "@/services/sessionService";
 import { postVoiceTurn } from "@/services/voiceTurnService";
-import type { VoiceAgentStatus, VoiceConversationTurn } from "@/types";
+import type { LanguageDetectionResult, VoiceAgentStatus, VoiceConversationTurn } from "@/types";
+import { formatSessionLanguage } from "@/utils/voiceUi";
 
 const initialStatus: VoiceAgentStatus = {
   phase: "idle",
@@ -17,6 +18,8 @@ const initialStatus: VoiceAgentStatus = {
   callId: null,
   conversationId: null,
   sessionId: null,
+  language: null,
+  languageNotice: null,
   turns: [],
   lastPipeline: null,
   lastCost: null,
@@ -41,6 +44,25 @@ function safeErrorMessage(error: unknown): { message: string; code: string | nul
   return { message: "Something went wrong. You can retry or press Stop.", code: null };
 }
 
+function languageNoticeFromTurn(input: {
+  previous: string | null;
+  next: string | null;
+  languageChanged?: boolean;
+  detection?: LanguageDetectionResult;
+}): string | null {
+  if (input.detection?.unsupported) {
+    return "Unsupported language — please continue in English, Hindi, or Hinglish.";
+  }
+  if (input.detection?.unclear) {
+    return "Speech was unclear — please try again.";
+  }
+  if (input.languageChanged && input.next) {
+    const from = input.previous ? formatSessionLanguage(input.previous) : "prior language";
+    return `Language switched to ${formatSessionLanguage(input.next)} (was ${from}).`;
+  }
+  return null;
+}
+
 export function useVoiceAgent() {
   const [status, setStatus] = useState<VoiceAgentStatus>(initialStatus);
   const recorderRef = useRef<ClipRecorderSession | null>(null);
@@ -48,6 +70,7 @@ export function useVoiceAgent() {
   const callIdRef = useRef<string | null>(null);
   const conversationIdRef = useRef<string | null>(null);
   const sessionIdRef = useRef<string | null>(null);
+  const languageRef = useRef<string | null>(null);
   const turnsRef = useRef<VoiceConversationTurn[]>([]);
   const activeRef = useRef(false);
 
@@ -91,6 +114,7 @@ export function useVoiceAgent() {
     turnsRef.current = [];
     callIdRef.current = null;
     conversationIdRef.current = null;
+    languageRef.current = null;
     sessionIdRef.current = newSessionId();
     activeRef.current = true;
 
@@ -101,6 +125,8 @@ export function useVoiceAgent() {
         callId: null,
         conversationId: null,
         sessionId: sessionIdRef.current,
+        language: null,
+        languageNotice: null,
         turns: [],
         lastPipeline: null,
         lastCost: null,
@@ -115,6 +141,7 @@ export function useVoiceAgent() {
       }
       callIdRef.current = snapshot.callId;
       conversationIdRef.current = snapshot.conversationId;
+      languageRef.current = snapshot.language ?? "en";
 
       await beginListening();
       if (!activeRef.current) {
@@ -129,6 +156,8 @@ export function useVoiceAgent() {
         callId: snapshot.callId,
         conversationId: snapshot.conversationId,
         sessionId: sessionIdRef.current,
+        language: languageRef.current,
+        languageNotice: null,
         turns: [],
         lastPipeline: null,
         lastCost: null,
@@ -146,6 +175,8 @@ export function useVoiceAgent() {
         callId: null,
         conversationId: null,
         sessionId: sessionIdRef.current,
+        language: null,
+        languageNotice: null,
         turns: [],
         lastPipeline: null,
         lastCost: null,
@@ -208,6 +239,7 @@ export function useVoiceAgent() {
     }
 
     try {
+      const previousLanguage = languageRef.current;
       const response = await postVoiceTurn({
         audioBase64: clip.audioBase64,
         mimeType: clip.mimeType,
@@ -215,6 +247,7 @@ export function useVoiceAgent() {
         callId: callIdRef.current ?? undefined,
         conversationId: conversationIdRef.current ?? undefined,
         sessionId: sessionIdRef.current ?? undefined,
+        languageHint: languageRef.current ?? undefined,
       });
 
       if (!activeRef.current) {
@@ -230,6 +263,15 @@ export function useVoiceAgent() {
       if (response.sessionId) {
         sessionIdRef.current = response.sessionId;
       }
+
+      const nextLanguage = response.language?.trim() || languageRef.current;
+      languageRef.current = nextLanguage;
+      const languageNotice = languageNoticeFromTurn({
+        previous: previousLanguage,
+        next: nextLanguage,
+        languageChanged: response.languageChanged,
+        detection: response.languageDetection,
+      });
 
       const ttsNotice = response.ttsError
         ? `Audio playback unavailable (${response.ttsError.message}). Showing text reply.`
@@ -254,6 +296,8 @@ export function useVoiceAgent() {
         callId: callIdRef.current,
         conversationId: conversationIdRef.current,
         sessionId: sessionIdRef.current,
+        language: languageRef.current,
+        languageNotice,
         turns: turnsRef.current,
         lastPipeline: response.pipeline ?? null,
         lastCost: turnCost,
@@ -299,6 +343,8 @@ export function useVoiceAgent() {
           ? `${ttsNotice} Listening for the next turn.`
           : "Listening — speak, then press Send turn.",
         level: 0,
+        language: languageRef.current,
+        languageNotice,
         turns: turnsRef.current,
         lastPipeline: turnsRef.current[turnsRef.current.length - 1]?.pipeline ?? null,
         lastCost: turnsRef.current[turnsRef.current.length - 1]?.cost ?? null,
@@ -318,6 +364,8 @@ export function useVoiceAgent() {
         phase: "error",
         message,
         level: 0,
+        language: languageRef.current,
+        languageNotice: null,
         turns: turnsRef.current,
         lastPipeline: turnsRef.current[turnsRef.current.length - 1]?.pipeline ?? null,
         lastCost: turnsRef.current[turnsRef.current.length - 1]?.cost ?? null,
@@ -363,6 +411,8 @@ export function useVoiceAgent() {
       callId: null,
       conversationId: conversationIdRef.current,
       sessionId: sessionIdRef.current,
+      language: languageRef.current,
+      languageNotice: null,
       turns: turnsRef.current,
       lastPipeline: turnsRef.current[turnsRef.current.length - 1]?.pipeline ?? null,
       lastCost: turnsRef.current[turnsRef.current.length - 1]?.cost ?? null,
