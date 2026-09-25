@@ -420,4 +420,28 @@ describe("VoiceAgentPanel multilingual language indicator (KAN-29)", () => {
       expect(screen.getAllByTestId("voice-turn")).toHaveLength(2);
     });
   });
+
+  it("KAN-31 shows Hinglish when the turn returns language=hinglish", async () => {
+    postVoiceTurnMock.mockResolvedValue({
+      transcript: "Mujhe appointment chahiye tomorrow",
+      replyText: "Theek hai, main help karunga.",
+      language: "hinglish",
+      languageChanged: true,
+      conversationId: "conv-1",
+      callId: "call-1",
+      audioBase64: "BQQD",
+      mimeType: "audio/mpeg",
+    } satisfies VoiceTurnResponse);
+
+    const user = userEvent.setup();
+    renderCallsPage();
+    await user.click(screen.getByTestId("voice-start"));
+    await waitFor(() => expect(screen.getByTestId("voice-send-turn")).toBeEnabled());
+    await user.click(screen.getByTestId("voice-send-turn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("voice-language")).toHaveTextContent("Hinglish");
+      expect(screen.getByTestId("voice-language-notice")).toHaveTextContent(/Hinglish/i);
+    });
+  });
 });
