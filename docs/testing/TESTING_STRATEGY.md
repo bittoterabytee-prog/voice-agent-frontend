@@ -13,13 +13,13 @@
 | Dashboard load + nav | `tests/App.test.tsx` | TC-002, TC-003 style routes |
 | Live call monitor + voice states | `tests/App.test.tsx` | KAN-19 SRD §33 fields, TC-002 voice chrome |
 | Call history demo table | `tests/App.test.tsx` | KAN-19 history page |
-| Voice UI mapping | `tests/voiceUi.test.ts` | Conversation state → idle/listening/speaking/error |
+| Voice UI mapping | `tests/voiceUi.test.ts` | Conversation state → idle/listening/speaking/error; KAN-29 `formatSessionLanguage` |
 | Health success / failure | `tests/App.test.tsx` | System Status healthy vs unavailable |
 | API base URL | `tests/App.test.tsx`, `tests/apiClient.test.ts` | Env-driven URL |
 | Network errors | `tests/apiClient.test.ts` | `ApiError` wrapping |
 | Mic capture session | `tests/audioCapture.test.ts` | KAN-10 TC-001–004 (permission, chunks, stop, no device) |
 | Mic capture UI | `tests/MicrophoneCapturePanel.test.tsx` | Start/Stop, errors, chunk/level display |
-| Voice agent UI | `tests/VoiceAgentPanel.test.tsx` | KAN-16 TC-001–006 (listen, transcript, TTS, soft/hard errors, stop) |
+| Voice agent UI | `tests/VoiceAgentPanel.test.tsx` | KAN-16 TC-001–006; KAN-29 TC-001–003 (language indicator / switch / English baseline) |
 | Audio playback | `tests/audioPlayback.test.ts` | base64 → blob + play cleanup |
 | API POST / errors | `tests/apiClient.test.ts` | `apiPost`, backend error envelope |
 

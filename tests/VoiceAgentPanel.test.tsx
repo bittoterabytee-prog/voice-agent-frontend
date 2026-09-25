@@ -113,6 +113,7 @@ describe("VoiceAgentPanel (KAN-16)", () => {
       expect(startRecorder).toHaveBeenCalled();
       expect(screen.getByTestId("voice-agent").querySelector('[data-voice-state="listening"]')).not.toBeNull();
       expect(screen.getByTestId("voice-call-id")).toHaveTextContent("call-1");
+      expect(screen.getByTestId("voice-language")).toHaveTextContent("English (en)");
       expect(screen.getByTestId("voice-send-turn")).toBeEnabled();
     });
 
@@ -159,6 +160,7 @@ describe("VoiceAgentPanel (KAN-16)", () => {
           audioBase64: "AQID",
           mimeType: "audio/webm",
           callId: "call-1",
+          languageHint: "en",
         }),
       );
       expect(screen.getByTestId("voice-turn-transcript")).toHaveTextContent(
@@ -307,6 +309,115 @@ describe("VoiceAgentPanel (KAN-16)", () => {
       expect(screen.getByTestId("voice-agent-message")).toHaveTextContent("Session stopped");
       expect(screen.getByTestId("voice-start")).toBeEnabled();
       expect(screen.getByTestId("voice-stop")).toBeDisabled();
+    });
+  });
+});
+
+describe("VoiceAgentPanel multilingual language indicator (KAN-29)", () => {
+  beforeEach(() => {
+    startRecorder.mockReset();
+    stopAndCollect.mockReset();
+    cancelRecorder.mockReset();
+    startSessionMock.mockReset();
+    completeSessionMock.mockReset();
+    postVoiceTurnMock.mockReset();
+    playAudioBase64Mock.mockReset();
+    levelHandler = undefined;
+
+    startRecorder.mockResolvedValue(undefined);
+    stopAndCollect.mockResolvedValue(clip);
+    startSessionMock.mockResolvedValue(sessionSnapshot);
+    completeSessionMock.mockResolvedValue({ ...sessionSnapshot, callStatus: "COMPLETED" });
+    playAudioBase64Mock.mockReturnValue({
+      stop: vi.fn(),
+      ended: Promise.resolve(),
+    });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("TC-003 English baseline shows en after Start", async () => {
+    const user = userEvent.setup();
+    renderCallsPage();
+    await user.click(screen.getByTestId("voice-start"));
+    await waitFor(() => {
+      expect(screen.getByTestId("voice-language")).toHaveTextContent("English (en)");
+    });
+  });
+
+  it("TC-001 shows Hindi when the turn returns language=hi", async () => {
+    postVoiceTurnMock.mockResolvedValue({
+      transcript: "Namaste",
+      replyText: "Main madad karunga.",
+      language: "hi",
+      languageChanged: true,
+      languageDetection: {
+        language: "hi",
+        confidence: 0.9,
+        unclear: false,
+        unsupported: false,
+      },
+      conversationId: "conv-1",
+      callId: "call-1",
+      audioBase64: "BQQD",
+      mimeType: "audio/mpeg",
+    } satisfies VoiceTurnResponse);
+
+    const user = userEvent.setup();
+    renderCallsPage();
+    await user.click(screen.getByTestId("voice-start"));
+    await waitFor(() => expect(screen.getByTestId("voice-send-turn")).toBeEnabled());
+    await user.click(screen.getByTestId("voice-send-turn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("voice-language")).toHaveTextContent("Hindi (hi)");
+      expect(screen.getByTestId("voice-language-notice")).toHaveTextContent(/switched to Hindi/i);
+      expect(screen.getByTestId("voice-turn-reply")).toHaveTextContent("Main madad karunga.");
+    });
+  });
+
+  it("TC-002 updates the indicator after a mid-call language switch", async () => {
+    postVoiceTurnMock
+      .mockResolvedValueOnce({
+        transcript: "Hello",
+        replyText: "Hi",
+        language: "en",
+        languageChanged: false,
+        conversationId: "conv-1",
+        callId: "call-1",
+        audioBase64: "BQQD",
+        mimeType: "audio/mpeg",
+      } satisfies VoiceTurnResponse)
+      .mockResolvedValueOnce({
+        transcript: "Namaste",
+        replyText: "Theek hai",
+        language: "hi",
+        languageChanged: true,
+        conversationId: "conv-1",
+        callId: "call-1",
+        audioBase64: "BQQD",
+        mimeType: "audio/mpeg",
+      } satisfies VoiceTurnResponse);
+
+    const user = userEvent.setup();
+    renderCallsPage();
+    await user.click(screen.getByTestId("voice-start"));
+    await waitFor(() => expect(screen.getByTestId("voice-send-turn")).toBeEnabled());
+
+    await user.click(screen.getByTestId("voice-send-turn"));
+    await waitFor(() => {
+      expect(screen.getByTestId("voice-language")).toHaveTextContent("English (en)");
+    });
+
+    await waitFor(() => expect(screen.getByTestId("voice-send-turn")).toBeEnabled());
+    await user.click(screen.getByTestId("voice-send-turn"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("voice-language")).toHaveTextContent("Hindi (hi)");
+      expect(screen.getByTestId("voice-language-notice")).toHaveTextContent(/Language switched/i);
+      expect(screen.getAllByTestId("voice-turn")).toHaveLength(2);
     });
   });
 });
