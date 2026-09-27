@@ -13,7 +13,7 @@ import {
 import { isBookedOutcome } from "@/types/appointments";
 
 function mockOk(body: unknown, status = 200) {
-  return vi.fn(async () =>
+  return vi.fn(async (_input?: RequestInfo | URL, _init?: RequestInit) =>
     Promise.resolve({
       ok: true,
       status,
@@ -23,7 +23,7 @@ function mockOk(body: unknown, status = 200) {
 }
 
 function mockFail(status: number, code: string, message: string) {
-  return vi.fn(async () =>
+  return vi.fn(async (_input?: RequestInfo | URL, _init?: RequestInit) =>
     Promise.resolve({
       ok: false,
       status,

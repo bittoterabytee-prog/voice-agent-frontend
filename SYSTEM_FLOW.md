@@ -94,6 +94,24 @@ POST {VITE_API_BASE_URL}/api/appointments/*
 
 Booking UI (KAN-109) and manage UI (KAN-110) consume this layer. `isBookedOutcome` is true only for `outcome: "booked"` with a confirmation payload.
 
+## Appointment manage UI (KAN-110)
+
+```
+Operator opens /appointments → Manage appointment
+      │
+      ▼
+Lookup by appointmentId and/or patientId
+      │
+      ├── found → show detail
+      ├── multiple_matches → pick one
+      └── not_found → honest empty state
+      │
+      ▼
+Cancel (confirm checkbox) and/or Reschedule (API slots + confirm)
+      │
+      └── UI claims success only for cancelled / rescheduled outcomes
+```
+
 ## Browser microphone capture (KAN-10)
 
 ```
