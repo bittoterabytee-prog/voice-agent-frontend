@@ -51,6 +51,26 @@ MediaRecorder clip capture (mic permission)
 
 No WebSocket in Sprint 2. Details: [`docs/architecture/VOICE_PIPELINE.md`](docs/architecture/VOICE_PIPELINE.md).
 
+## Appointment API client (KAN-108)
+
+```
+UI / future booking screens
+      │
+      ▼
+appointmentService (src/services/appointmentService.ts)
+  identifyPatient | searchDoctor | resolveDateTime | checkAvailability
+  lookupAppointment | bookAppointment | cancelAppointment | rescheduleAppointment
+      │
+      ▼
+POST {VITE_API_BASE_URL}/api/appointments/*
+      │
+      ├── 200 + typed outcome  → UI uses outcome only (never invent slots/bookings)
+      ├── book without confirmed=true → needs_confirmation (no row written)
+      └── 4xx/5xx ApiError     → error.code / error.message (no secrets)
+```
+
+Booking UI (KAN-109) and manage UI (KAN-110) consume this layer. `isBookedOutcome` is true only for `outcome: "booked"` with a confirmation payload.
+
 ## Browser microphone capture (KAN-10)
 
 ```
