@@ -40,6 +40,7 @@
 - Resize viewport: sidebar collapses behind Menu on narrow screens.
 - On `/calls`, Voice agent Start opens a session and listens; Send turn posts audio; Stop releases the mic.
 - On `/calls`, Microphone Capture Start/Stop still exercises low-level PCM diagnostics.
+- On `/appointments`, book with confirmation creates a backend `SCHEDULED` appointment; manage lookup/cancel/reschedule require confirm (KAN-109/110). See knowledge [`E2E_APPOINTMENT_SMOKE_KAN113.md`](https://github.com/bittoterabytee-prog/voice-agent-knowledge/blob/main/docs/testing/E2E_APPOINTMENT_SMOKE_KAN113.md).
 
 ## Multilingual scenarios (KAN-32)
 
