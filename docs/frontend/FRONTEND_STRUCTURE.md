@@ -31,6 +31,7 @@ docs/                    Project knowledge (KAN-9+)
 | ---- | ---- | ---------- |
 | `/` | `DashboardPage` | Live call monitor (SRD §33 demo) + voice legend + System Status |
 | `/calls` | `CallsPage` | Voice agent (KAN-16) + mic diagnostics (KAN-10) + voice state reference |
+| `/appointments` | `AppointmentsPage` | Book appointment with confirmation (KAN-109) |
 | `/history` | `CallHistoryPage` | Recent appointment-agent sessions (demo table) |
 | `/settings` | `SettingsPage` | Shows resolved `VITE_API_BASE_URL` |
 | `*` | redirect | → `/` |
@@ -78,6 +79,7 @@ See [`docs/voice/AUDIO_CAPTURE.md`](../voice/AUDIO_CAPTURE.md) and [`docs/archit
 | `services/healthService.ts` | Typed health fetch |
 | `services/sessionService.ts` | Start / complete browser sessions |
 | `services/appointmentService.ts` | Sprint 4 appointment HTTP client (KAN-108) |
+| `components/AppointmentBookingPanel.tsx` | Booking flow with confirmation (KAN-109) |
 | `services/voiceTurnService.ts` | `POST /api/voice/turn` |
 | `services/clipRecorder.ts` | MediaRecorder clips + level meter |
 | `services/audioPlayback.ts` | Play backend `audioBase64` |

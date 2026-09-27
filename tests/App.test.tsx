@@ -109,6 +109,9 @@ describe("dashboard foundation", () => {
     await user.click(screen.getByRole("link", { name: "Call History" }));
     expect(await screen.findByTestId("history-page")).toBeInTheDocument();
 
+    await user.click(screen.getByRole("link", { name: "Appointments" }));
+    expect(await screen.findByTestId("appointments-page")).toBeInTheDocument();
+
     await user.click(screen.getByRole("link", { name: "Settings" }));
     expect(await screen.findByTestId("settings-page")).toBeInTheDocument();
 
