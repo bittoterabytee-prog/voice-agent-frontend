@@ -3,6 +3,7 @@ import type { NavItem } from "@/types";
 export const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", path: "/" },
   { label: "Calls", path: "/calls" },
+  { label: "Appointments", path: "/appointments" },
   { label: "Call History", path: "/history" },
   { label: "Settings", path: "/settings" },
 ];

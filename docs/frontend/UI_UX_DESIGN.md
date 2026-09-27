@@ -39,6 +39,7 @@ flowchart LR
 | ----- | ------- | ------------ |
 | `/` | Live monitoring: active call snapshot, voice-state legend, system health, recent calls strip | §33 Dashboard |
 | `/calls` | Browser mic capture + voice chrome reference | Voice interaction states |
+| `/appointments` | Book with live availability + explicit confirmation (KAN-109) | Appointment book flow |
 | `/history` | Past sessions (book / reschedule / cancel / handoff outcomes) | Appointment flows + handoff |
 | `/settings` | Resolved `VITE_API_BASE_URL` | Ops |
 
@@ -73,7 +74,7 @@ On `/calls`, the interactive voice chrome shows session language from the API (`
 ## Out of scope for this design ticket
 
 - Wiring to real telephony / WebSocket call feeds
-- Booking mutations from the UI
+- Cancel / reschedule manage UI (KAN-110)
 - Exposing model chain-of-thought
 
 ## Implementation notes for follow-on tickets

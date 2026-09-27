@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { DashboardLayout } from "@/layouts/DashboardLayout";
+import { AppointmentsPage } from "@/pages/AppointmentsPage";
 import { CallHistoryPage } from "@/pages/CallHistoryPage";
 import { CallsPage } from "@/pages/CallsPage";
 import { DashboardPage } from "@/pages/DashboardPage";
@@ -11,6 +12,7 @@ export function AppRoutes() {
       <Route element={<DashboardLayout />}>
         <Route index element={<DashboardPage />} />
         <Route path="calls" element={<CallsPage />} />
+        <Route path="appointments" element={<AppointmentsPage />} />
         <Route path="history" element={<CallHistoryPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
