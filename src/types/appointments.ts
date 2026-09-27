@@ -244,3 +244,15 @@ export function isBookedOutcome(
 ): result is Extract<BookAppointmentResult, { outcome: "booked" }> {
   return result.outcome === "booked" && result.confirmation != null;
 }
+
+export function isCancelledOutcome(
+  result: CancelAppointmentResult,
+): result is Extract<CancelAppointmentResult, { outcome: "cancelled" }> {
+  return result.outcome === "cancelled";
+}
+
+export function isRescheduledOutcome(
+  result: RescheduleAppointmentResult,
+): result is Extract<RescheduleAppointmentResult, { outcome: "rescheduled" }> {
+  return result.outcome === "rescheduled";
+}

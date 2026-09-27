@@ -39,7 +39,7 @@ flowchart LR
 | ----- | ------- | ------------ |
 | `/` | Live monitoring: active call snapshot, voice-state legend, system health, recent calls strip | §33 Dashboard |
 | `/calls` | Browser mic capture + voice chrome reference | Voice interaction states |
-| `/appointments` | Book with live availability + explicit confirmation (KAN-109) | Appointment book flow |
+| `/appointments` | Book + manage (lookup/cancel/reschedule) with confirmation (KAN-109 / KAN-110) | Appointment flows |
 | `/history` | Past sessions (book / reschedule / cancel / handoff outcomes) | Appointment flows + handoff |
 | `/settings` | Resolved `VITE_API_BASE_URL` | Ops |
 
