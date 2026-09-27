@@ -13,7 +13,7 @@ src/
 ├── layouts/             Dashboard chrome (sidebar + outlet)
 ├── pages/               Route-level screens
 ├── routes/              React Router route table
-├── services/            HTTP client, health, sessions, turn, capture, playback
+├── services/            HTTP client, health, sessions, appointments, turn, capture, playback
 ├── store/               Lightweight UI state (sidebar open/close)
 ├── styles/              Global CSS
 ├── types/               Shared TypeScript types
@@ -47,6 +47,16 @@ UI/UX design handoff: [`UI_UX_DESIGN.md`](UI_UX_DESIGN.md).
 | `POST` | `/api/sessions` | `startSession()` |
 | `POST` | `/api/sessions/:callId/complete` | `completeSession()` |
 | `POST` | `/api/voice/turn` | `postVoiceTurn()` |
+| `POST` | `/api/appointments/patients/identify` | `identifyPatient()` (KAN-108) |
+| `POST` | `/api/appointments/doctors/search` | `searchDoctor()` |
+| `POST` | `/api/appointments/datetime/resolve` | `resolveDateTime()` |
+| `POST` | `/api/appointments/availability` | `checkAvailability()` |
+| `POST` | `/api/appointments/lookup` | `lookupAppointment()` |
+| `POST` | `/api/appointments/book` | `bookAppointment()` (`confirmed: true` to persist) |
+| `POST` | `/api/appointments/cancel` | `cancelAppointment()` |
+| `POST` | `/api/appointments/reschedule` | `rescheduleAppointment()` |
+
+Appointment helpers live in `src/services/appointmentService.ts` with types in `src/types/appointments.ts`. UI must use typed `outcome` values — never invent slots or claim `booked` without API confirmation (`isBookedOutcome`).
 
 See [`docs/backend/API_DOCUMENTATION.md`](../backend/API_DOCUMENTATION.md).
 
@@ -67,6 +77,7 @@ See [`docs/voice/AUDIO_CAPTURE.md`](../voice/AUDIO_CAPTURE.md) and [`docs/archit
 | `services/apiClient.ts` | Base URL resolution, `apiGet` / `apiPost`, `ApiError` |
 | `services/healthService.ts` | Typed health fetch |
 | `services/sessionService.ts` | Start / complete browser sessions |
+| `services/appointmentService.ts` | Sprint 4 appointment HTTP client (KAN-108) |
 | `services/voiceTurnService.ts` | `POST /api/voice/turn` |
 | `services/clipRecorder.ts` | MediaRecorder clips + level meter |
 | `services/audioPlayback.ts` | Play backend `audioBase64` |
